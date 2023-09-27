@@ -2,8 +2,7 @@
 obj/
 .idea/
 
-*.g.cs
-
 # Rust files
 target/
+bindings/
 Cargo.lock

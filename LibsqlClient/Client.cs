@@ -1,8 +1,6 @@
-﻿using ClientLib;
-
-namespace LibsqlClient;
+﻿namespace LibsqlClient;
 
 public class Client
 {
-    public static int my_add(int x, int y) => ClientLib.Client.my_add(x, y);
+    public static int Add(int x, int y) => ClientLib.Client.my_add(x, y);
 }
