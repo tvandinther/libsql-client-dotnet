@@ -3,6 +3,14 @@ services:
   cargo:
     image: rust:latest
     volumes:
-      - .:/app
+      - ./rust-library:/app
     working_dir: /app
     entrypoint: ["cargo"]
+  
+  rust-build:
+    image: rust:latest
+    volumes:
+      - ./rust-library:/app
+    working_dir: /app
+    entrypoint: ["cargo", "build", "--release", "--target", "x86_64-unknown-linux-gnu"]
+    

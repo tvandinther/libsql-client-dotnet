@@ -1,3 +1,9 @@
 ﻿bin/
 obj/
 .idea/
+
+*.g.cs
+
+# Rust files
+target/
+Cargo.lock

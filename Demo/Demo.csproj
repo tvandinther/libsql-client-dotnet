@@ -7,6 +7,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  
   <ItemGroup>
     <ProjectReference Include="..\LibsqlClient\LibsqlClient.csproj" />
   </ItemGroup>
