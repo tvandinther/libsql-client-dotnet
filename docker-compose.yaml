@@ -1,0 +1,8 @@
+﻿version: "3.8"
+services: 
+  cargo:
+    image: rust:latest
+    volumes:
+      - .:/app
+    working_dir: /app
+    entrypoint: ["cargo"]
