@@ -1,0 +1,1 @@
+﻿# libsql-client-dotnet
