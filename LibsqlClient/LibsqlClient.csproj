@@ -26,7 +26,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Include="..\rust-library\bindings\ClientLib.g.cs" Link="ClientLib.g.cs" />
+        <Compile Include="..\rust-library\bindings\Libsql.g.cs" Link="Libsql.g.cs" />
     </ItemGroup>
 
 </Project>

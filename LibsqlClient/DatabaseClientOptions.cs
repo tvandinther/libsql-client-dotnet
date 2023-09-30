@@ -9,7 +9,7 @@ public class DatabaseClientOptions
         UseHttps = useHttps;
     }
 
-    internal static DatabaseClientOptions Default => new("http://localhost:8080");
+    internal static DatabaseClientOptions Default => new("");
     public string Url { get; set; }
     public string? AuthToken { get; set; }
     public bool UseHttps { get; set; }
