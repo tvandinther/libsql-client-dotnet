@@ -13,6 +13,7 @@ target = "x86_64-unknown-linux-gnu"
 [dependencies]
 libsql = "0.1.11"
 lazy_static = "1.4"
+tokio = { version = "1", features = ["full"] }
 
 [build-dependencies]
 csbindgen = "1.2.0"
