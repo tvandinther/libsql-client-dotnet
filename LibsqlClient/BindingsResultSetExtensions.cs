@@ -13,22 +13,22 @@ internal static class BindingsResultSetExtensions
         {
             var stringBuffer = Marshal.PtrToStructure<ByteBuffer>(ptrs[i]);
             arr[i] = stringBuffer.AsSpan<char>().ToString();
-            Libsql.free_byte_buffer((ByteBuffer*)ptrs[i]);
+            Libsql.byte_buffer_dealloc((ByteBuffer*)ptrs[i]);
         }
 
-        Libsql.free_byte_buffer(resultSet.columns);
+        resultSet.columns->ByteBufferDealloc();
         return arr;
     }
 
     public static unsafe IEnumerable<object?[]> GetRows(this Bindings.ResultSet resultSet)
     {
         var rowsIterator = resultSet.rows_iterator_ptr;
-        var hasNext = Libsql.rows_iterator_next(rowsIterator);
+        var hasNext = rowsIterator->RowsIteratorNext();
         var rows = new List<object?[]>();
         
         while(hasNext)
         {
-            var row = Libsql.rows_iterator_current(rowsIterator);
+            var row = rowsIterator->RowsIteratorCurrent();
             
             var values = row->AsSpan<Value>();
             var rowValues = new object?[values.Length];
@@ -38,7 +38,7 @@ internal static class BindingsResultSetExtensions
                 rowValues[i] = (value.value_type switch
                 {
                     Bindings.ValueType.Integer => value.value_buffer->AsSpan<int>()[0],
-                    Bindings.ValueType.Real => value.value_buffer->AsSpan<float>()[0],
+                    Bindings.ValueType.Real => value.value_buffer->AsSpan<double>()[0],
                     Bindings.ValueType.Text => value.value_buffer->AsSpan<char>().ToString(),
                     Bindings.ValueType.Blob => value.value_buffer->AsSpan<byte>().ToArray(),
                     Bindings.ValueType.Null => null,
@@ -46,9 +46,11 @@ internal static class BindingsResultSetExtensions
                 });
             }
             rows.Add(rowValues);
-            hasNext = Libsql.rows_iterator_next(rowsIterator);
+            hasNext = rowsIterator->RowsIteratorNext();
         }
-        
+
+        // rowsIterator->
+        rowsIterator->RowsIteratorDealloc();
         return rows;
     }
 }

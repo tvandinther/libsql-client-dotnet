@@ -41,14 +41,14 @@ pub struct ResultSet {
 }
 
 #[no_mangle]
-pub extern "C" fn rows_iterator_next(row_iterator: *mut RowsIterator) -> bool {
-    let iterator = unsafe { &mut *row_iterator };
+pub extern "C" fn rows_iterator_next(rows_iterator: *mut RowsIterator) -> bool {
+    let iterator = unsafe { &mut *rows_iterator };
     iterator.next()
 }
 
 #[no_mangle]
-pub extern "C" fn rows_iterator_current(row_iterator: *mut RowsIterator) -> *mut ByteBuffer {
-    let iterator = unsafe { &mut *row_iterator };
+pub extern "C" fn rows_iterator_current(rows_iterator: *mut RowsIterator) -> *mut ByteBuffer {
+    let iterator = unsafe { &mut *rows_iterator };
     iterator.current()
 }
 
@@ -160,15 +160,12 @@ pub trait AllocStrArray {
 
 impl AllocStrArray for Vec<&str> {
     fn alloc_str_array(&self) -> *mut ByteBuffer {
-        println!("allocating array for: {}", self.join(", "));
-
         let mut byte_buffers: Vec<*mut ByteBuffer> = Vec::new();
 
         for s in self {
             let utf16_data = s.encode_utf16().collect::<Vec<u16>>();
             let buffer = ByteBuffer::from_vec_struct(utf16_data);
             let buffer_ptr = Box::into_raw(Box::new(buffer));
-            println!("ptr: {:p}", buffer_ptr);
             byte_buffers.push(buffer_ptr);
         }
 
@@ -178,18 +175,16 @@ impl AllocStrArray for Vec<&str> {
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn free_byte_buffer(buffer: *mut ByteBuffer) {
+pub unsafe extern "C" fn byte_buffer_dealloc(buffer: *mut ByteBuffer) {
     let buf = Box::from_raw(buffer);
     buf.destroy();
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn free_rows_iterator(rows_iterator: *mut RowsIterator) {
+pub unsafe extern "C" fn rows_iterator_dealloc(rows_iterator: *mut RowsIterator) {
     let mut iterator = Box::from_raw(rows_iterator);
     iterator.destroy();
 }
 
 #[no_mangle]
-pub extern "C" fn dummy(value: Value, value_type: ValueType) {
-    // println!("value: {:?}, value_type: {:?}", value, value_type);
-}
+pub extern "C" fn export(_value: Value, _value_type: ValueType) {}
