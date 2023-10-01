@@ -4,6 +4,35 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
+    <PropertyGroup>
+        <NativeOutputPath>../rust-library/target/release/</NativeOutputPath>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <PlatformTarget>x64</PlatformTarget>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <PlatformTarget>x64</PlatformTarget>
+    </PropertyGroup>
+
+    <ItemGroup>
+<!--        <None Condition="$([MSBuild]::IsOsPlatform('MacOS'))" Include="$(NativeOutputPath)libclient_lib.dylib" CopyToOutputDirectory="PreserveNewest" />-->
+        <None Condition="$([MSBuild]::IsOsPlatform('Linux'))" Include="$(NativeOutputPath)libclient_lib.so" CopyToOutputDirectory="PreserveNewest" />
+        <None Condition="$([MSBuild]::IsOsPlatform('Windows'))" Include="$(NativeOutputPath)libclient_lib.so" CopyToOutputDirectory="PreserveNewest" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="..\rust-library\bindings\Libsql.g.cs" Link="Libsql.g.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="csbindgen" Version="1.8.3">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
 </Project>
