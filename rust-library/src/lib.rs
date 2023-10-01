@@ -1,21 +1,23 @@
 ﻿use libsql;
+use rows_iterator::Value;
+use rows_iterator::ValueType;
 use std::collections::HashMap;
 use std::sync::Mutex;
 use std::str;
 use std::slice;
 use std::string;
-use std::convert::TryInto;
 use lazy_static::lazy_static;
 use tokio::runtime::Runtime;
-use std::ffi::CString;
-use std::alloc::{self, Layout};
 
 mod byte_buffer;
 use byte_buffer::ByteBuffer;
 
+mod rows_iterator;
+use rows_iterator::RowsIterator;
+
 const SUCCESS: i32 = 0;
 const DATABASE_NOT_FOUND: i32 = -1;
-const EXECUTION_ERROR: u64 = 0;
+// const EXECUTION_ERROR: u64 = 0;
 const DATABASE_CREATION_ERROR: i32 = -3;
 
 lazy_static! {
@@ -25,10 +27,29 @@ lazy_static! {
 }
 
 #[repr(C)]
+pub struct FFIResult<T> {
+    pub error: *mut ByteBuffer,
+    pub result: T,
+}
+
+#[repr(C)]
 pub struct ResultSet {
     pub rows_affected: u64,
     pub last_insert_rowid: i64,
     pub columns: *mut ByteBuffer,
+    pub rows_iterator_ptr: *mut RowsIterator,
+}
+
+#[no_mangle]
+pub extern "C" fn rows_iterator_next(row_iterator: *mut RowsIterator) -> bool {
+    let iterator = unsafe { &mut *row_iterator };
+    iterator.next()
+}
+
+#[no_mangle]
+pub extern "C" fn rows_iterator_current(row_iterator: *mut RowsIterator) -> *mut ByteBuffer {
+    let iterator = unsafe { &mut *row_iterator };
+    iterator.current()
 }
 
 #[no_mangle]
@@ -71,11 +92,12 @@ pub extern "C" fn database_execute(key: i32, str_ptr: *const u16, len: i32) -> R
         (*GLOBAL_RUNTIME).block_on(async {
             match convert_to_str(str_ptr, len) {
                 Ok(s) => {
-                    let x = conn.execute(s.as_str(), libsql::Params::None).await;
+                    let _ = conn.execute(s.as_str(), libsql::Params::None).await;
                     return ResultSet {
                         rows_affected: conn.changes(),
                         last_insert_rowid: conn.last_insert_rowid(),
-                        columns: Box::into_raw(Box::new(ByteBuffer::from_vec(vec![]))),
+                        columns: std::ptr::null_mut(),
+                        rows_iterator_ptr: Box::into_raw(Box::new(RowsIterator::empty())),
                     };
                 },
                 Err(e) => panic!("{}", e),
@@ -95,13 +117,14 @@ pub extern "C" fn database_query(key: i32, str_ptr: *const u16, len: i32) -> Res
             match convert_to_str(str_ptr, len) {
                 Ok(s) => {
                     let stmt = conn.prepare(s.as_str()).await.unwrap();
-                    let mut rows = stmt.query(&libsql::Params::None).await.unwrap();
+                    let rows = stmt.query(&libsql::Params::None).await.unwrap();
                     let cs = stmt.columns();
                     let columns: Vec<&str> = cs.iter().map(|c| c.name()).collect();
                     return ResultSet {
                         rows_affected: conn.changes(),
                         last_insert_rowid: conn.last_insert_rowid(),
                         columns: columns.alloc_str_array(),
+                        rows_iterator_ptr: Box::into_raw(Box::new(RowsIterator::new(rows))),
                     };
                 },
                 Err(e) => panic!("{}", e),
@@ -158,4 +181,15 @@ impl AllocStrArray for Vec<&str> {
 pub unsafe extern "C" fn free_byte_buffer(buffer: *mut ByteBuffer) {
     let buf = Box::from_raw(buffer);
     buf.destroy();
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn free_rows_iterator(rows_iterator: *mut RowsIterator) {
+    let mut iterator = Box::from_raw(rows_iterator);
+    iterator.destroy();
+}
+
+#[no_mangle]
+pub extern "C" fn dummy(value: Value, value_type: ValueType) {
+    // println!("value: {:?}, value_type: {:?}", value, value_type);
 }

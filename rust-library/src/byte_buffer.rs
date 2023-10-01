@@ -1,7 +1,6 @@
 use std::convert::TryFrom;
 use std::convert::TryInto;
 
-
 #[repr(C)]
 pub struct ByteBuffer {
     ptr: *mut u8,
@@ -84,5 +83,9 @@ impl ByteBuffer {
 
     pub fn destroy(self) {
         drop(self.destroy_into_vec());
+    }
+
+    pub fn box_raw<T: Sized>(self) -> *mut T {
+        Box::into_raw(Box::new(self)) as *mut T
     }
 }
