@@ -14,7 +14,6 @@ internal class DatabaseWrapper : IDatabaseClient
     {
         _key = Libsql.database_new_in_memory();
         Libsql.database_open_connection(_key);
-        Console.WriteLine("Created database with key: {0}", _key);
     }
     
     public Task<ResultSet> Execute(string sql)
@@ -28,12 +27,7 @@ internal class DatabaseWrapper : IDatabaseClient
                 {
                     var rs = Libsql.database_query(_key, p, sql.Length);
 
-                    return new ResultSet(
-                        rs.last_insert_rowid,
-                        rs.rows_affected,
-                        rs.GetColumns(),
-                        rs.GetRows()
-                        );
+                    return rs.ToManagedResultSet();
                 });
             }
         }

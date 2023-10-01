@@ -11,5 +11,5 @@ A .NET client library for libsql. The project contains a rust library wrapping t
     - [x] It returns the number of affected rows.
     - [x] It returns the last inserted row id.
     - [x] It returns the column names.
-    - [x] It returns a list of arrays (rows) of boxed values.
+    - [x] It returns a list of arrays (rows) of typed boxed values.
 - [ ] A database can be destroyed.
