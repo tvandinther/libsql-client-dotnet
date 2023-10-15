@@ -39,8 +39,12 @@ fi
 
 git sparse-checkout init
 git sparse-checkout set "crates"
-git fetch --depth 1 origin tag v${LIBSQL_VERSION}
-git reset --hard tags/v${LIBSQL_VERSION}
+# -----
+git fetch --depth 1 origin
+git checkout main
+# -----
+# git fetch --depth 1 origin tag v${LIBSQL_VERSION}
+# git reset --hard tags/v${LIBSQL_VERSION}
 
 cd ..
 cargo build --release

@@ -1,19 +1,5 @@
-﻿[package]
-name = "client_lib"
-version = "0.1.0"
-edition = "2018"
-
-[lib]
-crate-type = ["dylib"]
-path = "libsql/crates/bindings/c/src/lib.rs"
-
-[build]
-target = "x86_64-unknown-linux-gnu"
-
-[dependencies]
-libsql = "0.1.11"
-lazy_static = "1.4"
-tokio = { version = "1", features = ["full"] }
-
-[build-dependencies]
-csbindgen = "1.2.0"
+[workspace]
+members = [
+    "csharp-bindings",
+    "libsql/crates/bindings/c"
+]

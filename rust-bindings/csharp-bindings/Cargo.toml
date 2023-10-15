@@ -1,0 +1,16 @@
+﻿[package]
+name = "csharp-bindings"
+version = "0.1.0"
+
+[lib]
+crate-type = ["dylib"]
+path = "../libsql/crates/bindings/c/src/lib.rs"
+
+[build]
+target = "x86_64-unknown-linux-gnu"
+
+[build-dependencies]
+csbindgen = "1.2.0"
+
+[dependencies]
+sql-experimental = { path = "../libsql/crates/bindings/c" }
