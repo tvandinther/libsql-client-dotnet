@@ -14,19 +14,26 @@ internal class DatabaseWrapper : IDatabaseClient
 
     public unsafe DatabaseWrapper()
     {
-        var url = "::memory::"u8;
-        var errorMessage = (byte**)0;
+        var url = ":memory:"u8;
         fixed (libsql_database_t* dbPtr = &_db)
         {
-            var errorCode = Libsql.libsql_open_ext(
-                (byte*)MemoryMarshal.GetReference(url), 
-                dbPtr, 
-                errorMessage);
+            fixed (byte* urlPtr = &url.GetPinnableReference())
+            {
+                var error = new Error();
+                var errorCode = Libsql.libsql_open_ext(
+                    urlPtr, 
+                    dbPtr, 
+                    &error.Ptr);
+                
+                error.ThrowIfNonZero(errorCode, "Failed to open database");
+            }
         }
         
         fixed (libsql_connection_t* connectionPtr = &_connection)
         {
-            var errorCode = Libsql.libsql_connect(_db, connectionPtr, errorMessage);
+            var error = new Error();
+            var errorCode = Libsql.libsql_connect(_db, connectionPtr, &error.Ptr);
+            error.ThrowIfNonZero(errorCode, "Failed to connect to database");
         }
     }
     
@@ -34,19 +41,21 @@ internal class DatabaseWrapper : IDatabaseClient
     {
         return Task.Run(() =>
         {
-            var errorMessage = (byte**)0;
-            ReadOnlySpan<Byte> sqlSpan = Encoding.UTF8.GetBytes(sql);
-            var sqlBytePtr = (byte*) MemoryMarshal.GetReference(sqlSpan);
-            var rows = new libsql_rows_t();
-            var errorCode = Libsql.libsql_execute(_connection, sqlBytePtr, &rows, errorMessage);
+            var error = new Error();
             
+            var rows = new libsql_rows_t();
+            var sqlPtr = sql.GetPtr();
+            var errorCode = Libsql.libsql_execute(_connection, sqlPtr, &rows, &error.Ptr);
+            Marshal.FreeHGlobal((IntPtr)sqlPtr);
+            error.ThrowIfNonZero(errorCode, "Failed to execute query");
+        
             var rs = new ResultSet(
                 0,
                 0,
                 rows.GetColumnNames(),
                 new Rows(rows)
             );
-            
+        
             return rs;
         });
     }
