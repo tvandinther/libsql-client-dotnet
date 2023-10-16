@@ -21,12 +21,12 @@
 
     <ItemGroup>
 <!--        <None Condition="$([MSBuild]::IsOsPlatform('MacOS'))" Include="$(NativeOutputPath)libclient_lib.dylib" CopyToOutputDirectory="PreserveNewest" />-->
-        <None Condition="$([MSBuild]::IsOsPlatform('Linux'))" Include="$(NativeOutputPath)libclient_lib.so" CopyToOutputDirectory="PreserveNewest" />
-        <None Condition="$([MSBuild]::IsOsPlatform('Windows'))" Include="$(NativeOutputPath)libclient_lib.so" CopyToOutputDirectory="PreserveNewest" />
+        <None Condition="$([MSBuild]::IsOsPlatform('Linux'))" Include="$(NativeOutputPath)libcsharp_bindings.so" CopyToOutputDirectory="PreserveNewest" />
+        <None Condition="$([MSBuild]::IsOsPlatform('Windows'))" Include="$(NativeOutputPath)libcsharp_bindings.so" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Include="..\rust-bindings\bindings\Libsql.g.cs" Link="Libsql.g.cs" />
+        <Compile Include="..\rust-bindings\csharp-bindings\bindings\Libsql.g.cs" Link="Libsql.g.cs" />
     </ItemGroup>
 
     <ItemGroup>

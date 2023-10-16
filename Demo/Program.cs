@@ -10,7 +10,7 @@ Console.WriteLine(string.Join(", ", rs2.Columns));
 Console.WriteLine("------------------------");
 Console.WriteLine(string.Join("\n", rs2.Rows.Select(row => string.Join(", ", row.Select(x => x.ToString())))));
 
-var user = ToUser(rs2.Rows.First());
+var user = ToUser(rs2.Rows.First().ToArray());
 Console.WriteLine(user);
 
 User ToUser(Value[] row)
