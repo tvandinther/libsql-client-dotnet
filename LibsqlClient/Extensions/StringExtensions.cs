@@ -8,7 +8,7 @@ public static class StringExtensions
     public static unsafe byte* GetPtr(this string str)
     {
         var bytes = Encoding.UTF8.GetBytes(str);
-        IntPtr ptr = Marshal.AllocHGlobal(bytes.Length + 1);
+        var ptr = Marshal.AllocHGlobal(bytes.Length + 1);
         Marshal.Copy(bytes, 0, ptr, bytes.Length);
         Marshal.WriteByte(ptr + bytes.Length, 0);
 

@@ -48,9 +48,10 @@ internal static class libsql_row_tExtensions
     {
         unsafe
         {
-            var errorMessage = (byte**)0;
+            var error = new Error();
             var blob = new blob();
-            var exitCode = Libsql.libsql_get_blob(row, columnIndex, &blob, errorMessage);
+            var exitCode = Libsql.libsql_get_blob(row, columnIndex, &blob, &error.Ptr);
+            error.ThrowIfNonZero(exitCode, "Failed to get blob");
             var bytes = new byte[blob.len];
             Marshal.Copy((IntPtr) blob.ptr, bytes, 0, blob.len);
             Libsql.libsql_free_blob(blob);

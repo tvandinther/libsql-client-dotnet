@@ -39,9 +39,10 @@ internal class RowsEnumerator : IEnumerator<IEnumerable<Value>>
            _columnTypes = new ValueType[columnCount];
            for (var i = 0; i < columnCount; i++)
            {
-               int type;
-               var errorMessage = (byte**)0;
-               var columnType = Libsql.libsql_column_type(_libsqlRowsT, i, &type, errorMessage);
+               int columnType;
+               var error = new Error();
+               var errorCode = Libsql.libsql_column_type(_libsqlRowsT, i, &columnType, &error.Ptr);
+               error.ThrowIfNonZero(errorCode, "Failed to get column type");
                _columnTypes[i] = (ValueType)columnType;
            } 
         }

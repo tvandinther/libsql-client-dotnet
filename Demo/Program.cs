@@ -2,9 +2,9 @@
 
 var dbClient = DatabaseClient.Create();
 
-var rs = await dbClient.Execute("CREATE TABLE `users` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `height` REAL, `data` BLOB)");
+var rs = await dbClient.Execute("CREATE TABLE IF NOT EXISTS `users` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `height` REAL, `data` BLOB)");
 Console.WriteLine(rs);
-var rs1 = await dbClient.Execute("INSERT INTO `users` (`name`, `height`, `data`) VALUES ('John Doe', 182.6, X'a4c7b8e21d3f50a6b9d2e8f7c1349a0b5c6d7e218349b6d012c71e8f9a093fed'), ('Jane Doe', NULL, NULL)");
+var rs1 = await dbClient.Execute("INSERT INTO `users` (`name`, `height`, `data`) VALUES ('John Doe', 182.6, X'a4c7b8e21d3f50a6b9d2e8f7c1349a0b5c6d7e218349b6d012c71e8f9a093fed'), ('Jane Doe', NULL, NULL, NULL)");
 var rs2 = await dbClient.Execute("SELECT `id`, `name`, `height`, `data` FROM `users`");
 
 Console.WriteLine(string.Join(", ", rs2.Columns));
