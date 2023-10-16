@@ -1,6 +1,7 @@
 ﻿[package]
 name = "csharp-bindings"
 version = "0.1.0"
+edition = "2021"
 
 [lib]
 crate-type = ["dylib"]
@@ -14,3 +15,6 @@ csbindgen = "1.2.0"
 
 [dependencies]
 sql-experimental = { path = "../libsql/crates/bindings/c" }
+libsql = { path = "../libsql/crates/core" }
+lazy_static = "1.4.0"
+tokio = { version = "1.29.1", features = [ "rt-multi-thread" ] }
