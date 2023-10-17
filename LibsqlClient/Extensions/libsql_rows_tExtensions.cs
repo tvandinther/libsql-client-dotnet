@@ -14,12 +14,19 @@ internal static class libsql_rows_tExtensions
             
             for (var i = 0; i < columnCount; i++)
             {
-                var errorMessage = (byte**)0;
+                var error = new Error();
                 var ptr = (byte*)0;
-                var columnName = Libsql.libsql_column_name(libsqlRowsT, i, &ptr, errorMessage);
+                var exitCode = Libsql.libsql_column_name(libsqlRowsT, i, &ptr, &error.Ptr);
+                
+                error.ThrowIfNonZero(exitCode, "Failed to get column name");
                 
                 var text = Marshal.PtrToStringAuto((IntPtr)ptr);
                 Libsql.libsql_free_string(ptr);
+                
+                if (text is null)
+                {
+                    throw new InvalidOperationException("Text was marshalled to null");   
+                }
                 
                 columnNames[i] = text;
             }
