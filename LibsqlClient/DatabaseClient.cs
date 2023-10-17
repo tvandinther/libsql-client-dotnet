@@ -10,25 +10,18 @@ public static class DatabaseClient
         
         if (IsInMemory(options.Url))
         {
-            return new DatabaseWrapper();
+            return new DatabaseWrapper(":memory:");
         }
         
         var uri = new Uri(options.Url);
         return uri.Scheme switch
         {
-            "http" or "https" => new WebDatabaseClient(options),
-            "ws" or "wss" => throw new ArgumentException("ws:// is not yet supported"),
-            "file" => throw new ArgumentException("file:// is not yet supported"),
+            "http" or "https" => throw new ArgumentException($"{uri.Scheme}:// is not yet supported"),
+            "ws" or "wss" => throw new ArgumentException($"{uri.Scheme}:// is not yet supported"),
+            "file" => throw new ArgumentException(options.Url),
             _ => throw new ArgumentException("Invalid scheme")
         };
     }
     
-    private static bool IsInMemory(string url)
-    {
-        return url switch {
-            "" => true,
-            ":memory:" => true,
-            _ => false
-        };
-    }
+    private static bool IsInMemory(string url) => url is "" or ":memory:";
 }

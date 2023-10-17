@@ -5,59 +5,59 @@ namespace LibsqlClient.Extensions;
 
 internal static class libsql_row_tExtensions
 {
-    public static Integer GetInteger(this libsql_row_t row, int columnIndex)
+    public static unsafe Integer GetInteger(this libsql_row_t row, int columnIndex)
     {
-        unsafe
-        {
-            var errorMessage = (byte**)0;
-            long value;
-            var exitCode = Libsql.libsql_get_int(row, columnIndex, &value, errorMessage);
+        var error = new Error();
+        long value;
+        var exitCode = Libsql.libsql_get_int(row, columnIndex, &value, &error.Ptr);
             
-            return new Integer((int)value);
-        }
+        error.ThrowIfNonZero(exitCode, "Failed to get INTEGER");
+            
+        return new Integer((int)value);
     }
 
-    public static Text GetText(this libsql_row_t row, int columnIndex)
+    public static unsafe Text GetText(this libsql_row_t row, int columnIndex)
     {
-        unsafe
+        var error = new Error();
+        var ptr = (byte*)0;
+        var exitCode = Libsql.libsql_get_string(row, columnIndex, &ptr, &error.Ptr);
+            
+        error.ThrowIfNonZero(exitCode, "Failed to get TEXT");
+            
+        var text = Marshal.PtrToStringAuto((IntPtr)ptr);
+        Libsql.libsql_free_string(ptr);
+
+        if (text is null)
         {
-            var errorMessage = (byte**)0;
-            var ptr = (byte*)0;
-            var exitCode = Libsql.libsql_get_string(row, columnIndex, &ptr, errorMessage);
-            
-            var text = Marshal.PtrToStringAuto((IntPtr)ptr);
-            Libsql.libsql_free_string(ptr);
-            
-            return new Text(text);
+            throw new InvalidOperationException("Text was marshalled to null");   
         }
+            
+        return new Text(text);
     }
 
-    public static Real GetReal(this libsql_row_t row, int columnIndex)
+    public static unsafe Real GetReal(this libsql_row_t row, int columnIndex)
     {
-        unsafe
-        {
-            var errorMessage = (byte**)0;
-            double value;
-            var exitCode = Libsql.libsql_get_float(row, columnIndex, &value, errorMessage);
+        var error = new Error();
+        double value;
+        var exitCode = Libsql.libsql_get_float(row, columnIndex, &value, &error.Ptr);
             
-            return new Real(value);
-        }
+        error.ThrowIfNonZero(exitCode, "Failed to get REAL");
+            
+        return new Real(value);
     }
 
-    public static Blob GetBlob(this libsql_row_t row, int columnIndex)
+    public static unsafe Blob GetBlob(this libsql_row_t row, int columnIndex)
     {
-        unsafe
-        {
-            var error = new Error();
-            var blob = new blob();
-            var exitCode = Libsql.libsql_get_blob(row, columnIndex, &blob, &error.Ptr);
-            error.ThrowIfNonZero(exitCode, "Failed to get blob");
-            var bytes = new byte[blob.len];
-            Marshal.Copy((IntPtr) blob.ptr, bytes, 0, blob.len);
-            Libsql.libsql_free_blob(blob);
+        var error = new Error();
+        var blob = new blob();
+        var exitCode = Libsql.libsql_get_blob(row, columnIndex, &blob, &error.Ptr);
             
-            return new Blob(bytes);
-        }
+        error.ThrowIfNonZero(exitCode, "Failed to get BLOB");
+            
+        var bytes = new byte[blob.len];
+        Marshal.Copy((IntPtr) blob.ptr, bytes, 0, blob.len);
+        Libsql.libsql_free_blob(blob);
+            
+        return new Blob(bytes);
     }
 }
-
