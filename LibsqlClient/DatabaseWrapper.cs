@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Text;
 using Bindings;
 using LibsqlClient.Extensions;
 
@@ -17,12 +17,9 @@ internal class DatabaseWrapper : IDatabaseClient
         
         fixed (libsql_database_t* dbPtr = &_db)
         {
-            fixed (char* urlPtr = url)
+            fixed (byte* urlPtr = Encoding.UTF8.GetBytes(url))
             {
-                exitCode = Libsql.libsql_open_ext(
-                    (byte*)urlPtr, 
-                    dbPtr, 
-                    &error.Ptr);   
+                exitCode = Libsql.libsql_open_ext(urlPtr, dbPtr, &error.Ptr);   
             }
         }
         
@@ -52,10 +49,9 @@ internal class DatabaseWrapper : IDatabaseClient
             var rows = new libsql_rows_t();
             int exitCode;
             
-            fixed (char* sqlPtr = sql)
+            fixed (byte* sqlPtr = Encoding.UTF8.GetBytes(sql))
             {
-                exitCode = Libsql.libsql_execute(_connection, (byte*)sqlPtr, &rows, &error.Ptr);
-                Marshal.FreeHGlobal((IntPtr)sqlPtr);
+                exitCode = Libsql.libsql_execute(_connection, sqlPtr, &rows, &error.Ptr);
             }
             
             error.ThrowIfNonZero(exitCode, "Failed to execute query");
