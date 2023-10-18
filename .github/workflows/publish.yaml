@@ -24,6 +24,9 @@ jobs:
         with:
           dotnet-version: "7.0.x"
 
+      - name: Generate bindings
+        run: ./generate-bindings.sh
+
       # Publish
       - name: publish on version change
         id: publish_nuget
