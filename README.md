@@ -1,15 +1,45 @@
 ﻿# libsql-client-dotnet
 
-A .NET client library for libsql. The project contains a rust library wrapping the libsql crate and a .NET library invoking the rust library through C-compatible FFI bindings.
+A .NET client library for libsql.
 
 **This project is still in early development and not ready for production use.**
 
-## Progress
-- [x] An in memory database can be created.
-- [x] The in memory database can execute SQL statements.
+### Currently Supported Features
+
+- Creating a database:
+  - In memory.
+  - From file.
+- Executing SQL statements:
+  - Non-parameterised.
+
+### Planned Features
+
+- Positional and named arguments.
+- Remote databases.
+- Embedded replicas.
+- Prepared statements.
+- Batched statements.
+- Transactions.
+
+---
+
+### Progress
+- A database can be created:
+  - [x] In memory.
+  - [x] From file.
+  - [ ] From connection string.
+- [x] A database can be destroyed/closed/deallocated.
+- [ ] An embedded replica can be created.
+  - [ ] An embeded replica can be synced.
+- The database can execute SQL statements:
+  - [x] Non-parameterised.
+  - [ ] Parameterised with positional arguments.
+  - [ ] Parameterised with named arguments.
+- [ ] Prepared statements.
+- [ ] Batched statements.
+- [ ] Transactions.
 - [x] A result set is returned from an execution.
-    - [x] It returns the number of affected rows.
-    - [x] It returns the last inserted row id.
-    - [x] It returns the column names.
-    - [x] It returns a list of arrays (rows) of typed boxed values.
-- [ ] A database can be destroyed.
+  - [x] With the column names.
+  - [x] With an enumerable of enumerable (rows) of typed boxed values.
+  - [ ] With the number of affected rows.
+  - [ ] With the last inserted row id.
