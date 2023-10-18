@@ -23,7 +23,6 @@ internal class DatabaseWrapper : IDatabaseClient, IDisposable
         {
             fixed (byte* urlPtr = Encoding.UTF8.GetBytes(url))
             {
-                Console.WriteLine($"Passing {(int)urlPtr} to libsql_open_ext");
                 exitCode = Bindings.libsql_open_ext(urlPtr, dbPtr, &error.Ptr);   
             }
         }
