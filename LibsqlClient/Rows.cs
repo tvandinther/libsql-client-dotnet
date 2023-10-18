@@ -1,0 +1,137 @@
+﻿using System.Collections;
+using System.Diagnostics;
+using Bindings;
+using LibsqlClient.Extensions;
+
+namespace LibsqlClient;
+
+internal class Rows : IEnumerable<IEnumerable<Value>>
+{
+    private readonly libsql_rows_t _libsqlRowsT;
+    private RowEnumeratorData _enumeratorData = new();
+    private int? ColumnCount => _enumeratorData.ColumnTypes?.Length ?? null;
+
+    internal Rows(libsql_rows_t libsqlRowsT)
+    {
+        _libsqlRowsT = libsqlRowsT;
+    }
+    
+    public IEnumerator<IEnumerable<Value>> GetEnumerator() => 
+        new RowsEnumerator(_libsqlRowsT, ref _enumeratorData);
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
+}
+
+internal class RowsEnumerator : IEnumerator<IEnumerable<Value>>
+{
+    private readonly libsql_rows_t _libsqlRowsT;
+    private int _currentIndex = -1;
+    private int ParsedRowsCount => _enumeratorData.ParsedRows!.Count;
+    private readonly RowEnumeratorData _enumeratorData;
+
+    public RowsEnumerator(libsql_rows_t libsqlRowsT, ref RowEnumeratorData enumeratorData)
+    {
+        _libsqlRowsT = libsqlRowsT;
+        _enumeratorData = enumeratorData;
+        _enumeratorData.ParsedRows ??= new List<IEnumerable<Value>>();
+
+        if (_enumeratorData.ColumnTypes is not null) return;
+
+        unsafe
+        {
+            var columnCount = Libsql.libsql_column_count(_libsqlRowsT);
+            _enumeratorData.ColumnTypes = new ValueType[columnCount];
+            
+            for (var i = 0; i < columnCount; i++)
+            {
+                int columnType;
+                var error = new Error();
+                var errorCode = Libsql.libsql_column_type(_libsqlRowsT, i, &columnType, &error.Ptr);
+                error.ThrowIfNonZero(errorCode, "Failed to get column type");
+                _enumeratorData.ColumnTypes![i] = (ValueType)columnType;
+            }
+        }
+        
+        Debug.Assert(_enumeratorData.ParsedRows is not null, "_enumeratorData.ParsedRows is null");
+        Debug.Assert(_enumeratorData.ColumnTypes is not null, "_enumeratorData.ColumnTypes is null");
+    }
+    
+    public bool MoveNext()
+    {
+        _currentIndex++;
+        
+        if (ParsedRowsCount > _currentIndex)
+        {
+            Current = _enumeratorData.ParsedRows![_currentIndex];
+            
+            return true;
+        }
+
+        if (ParsedRowsCount == _currentIndex && _enumeratorData.FullyParsed) return false;
+
+
+        unsafe
+        {
+            var row = new libsql_row_t();
+            var error = new Error();
+            var parsedRow = new Value[_enumeratorData.ColumnTypes!.Length];
+            var exitCode = Libsql.libsql_next_row(_libsqlRowsT, &row, &error.Ptr);
+            
+            error.ThrowIfNonZero(exitCode, "Failed to get next row");
+            
+            if (row.ptr is null)
+            {
+                _enumeratorData.FullyParsed = true;
+                Libsql.libsql_free_rows(_libsqlRowsT);
+                return false;
+            }
+            
+            for (var i = 0; i < _enumeratorData.ColumnTypes.Length; i++)
+            {
+                Value value = _enumeratorData.ColumnTypes[i] switch
+                {
+                    ValueType.Integer => row.GetInteger(i),
+                    ValueType.Real => row.GetReal(i),
+                    ValueType.Text => row.GetText(i),
+                    ValueType.Blob => row.GetBlob(i),
+                    ValueType.Null => new Null(),
+                    _ => throw new ArgumentOutOfRangeException()
+                };
+                
+                parsedRow[i] = value;
+            }
+            
+            Libsql.libsql_free_row(row);
+            _enumeratorData.ParsedRows!.Add(parsedRow);
+            Current = parsedRow;
+            
+            return true;
+        }
+    }
+
+    public void Reset() => _currentIndex = -1;
+
+    public IEnumerable<Value> Current { get; private set; }
+
+    object IEnumerator.Current => Current;
+
+    public void Dispose() { }
+}
+
+internal class RowEnumeratorData
+{
+    public IList<IEnumerable<Value>>? ParsedRows;
+    public ValueType[]? ColumnTypes;
+    public bool FullyParsed;
+}
+
+internal enum ValueType {
+    Integer,
+    Real,
+    Text,
+    Blob,
+    Null,
+}
