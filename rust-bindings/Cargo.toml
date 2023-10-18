@@ -1,7 +1,7 @@
 [workspace]
 members = [
     "csharp-bindings",
-    "libsql/crates/bindings/c"
+    "libsql/bindings/c"
 ]
 
 [patch.crates-io]
