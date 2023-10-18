@@ -1,10 +1,11 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
 using Bindings;
 using LibsqlClient.Extensions;
 
 namespace LibsqlClient;
 
-internal class DatabaseWrapper : IDatabaseClient
+internal class DatabaseWrapper : IDatabaseClient, IDisposable
 {
     private libsql_database_t _db;
     private libsql_connection_t _connection;
@@ -12,13 +13,18 @@ internal class DatabaseWrapper : IDatabaseClient
 
     public unsafe DatabaseWrapper(string url)
     {
+        Debug.Assert(url is not null, "url is null");
         var error = new Error();
         int exitCode;
+        
+        // C# empty strings have null pointers, so we need to give the urln it some meat.
+        if (url is "") url = "\0";
         
         fixed (libsql_database_t* dbPtr = &_db)
         {
             fixed (byte* urlPtr = Encoding.UTF8.GetBytes(url))
             {
+                Console.WriteLine($"Passing {(int)urlPtr} to libsql_open_ext");
                 exitCode = Libsql.libsql_open_ext(urlPtr, dbPtr, &error.Ptr);   
             }
         }
@@ -68,5 +74,22 @@ internal class DatabaseWrapper : IDatabaseClient
     public Task<ResultSet> Execute(string sql, params object[] args)
     {
         throw new NotImplementedException();
+    }
+
+    private void ReleaseUnmanagedResources()
+    {
+        Libsql.libsql_disconnect(_connection);
+        Libsql.libsql_close(_db);
+    }
+
+    public void Dispose()
+    {
+        ReleaseUnmanagedResources();
+        GC.SuppressFinalize(this);
+    }
+
+    ~DatabaseWrapper()
+    {
+        ReleaseUnmanagedResources();
     }
 }
