@@ -128,7 +128,7 @@ internal class RowEnumeratorData
 }
 
 internal enum ValueType {
-    Integer,
+    Integer = 1,
     Real,
     Text,
     Blob,
