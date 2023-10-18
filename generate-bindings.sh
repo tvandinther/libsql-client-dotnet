@@ -28,6 +28,7 @@ function run_if_force {
 }
 
 run_if_force rm -rf "${bindings_dir}/libsql"
+run_if_force rm -rf "${bindings_dir}/target"
 mkdir -p "${bindings_dir}/libsql"
 
 cd "${bindings_dir}/libsql"
@@ -38,7 +39,7 @@ if ! git config remote.origin.url &> /dev/null;then
 fi
 
 git sparse-checkout init
-git sparse-checkout set bindings/c libsql libsql-sys
+git sparse-checkout set bindings/c bindings/wasm libsql libsql-sys
 # -----
 git fetch --quiet --depth 1 origin
 git checkout main
