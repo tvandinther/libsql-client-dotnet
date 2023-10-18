@@ -1,6 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <Title>Libsql.Client</Title>
+        <Authors>Tom van Dinther</Authors>
+        <Description>A client library for Libsql</Description>
+        <PackageVersion>0.1.0</PackageVersion>
+        <Copyright>Copyright (c) Tom van Dinther 2023</Copyright>
+        <PackageProjectUrl>https://github.com/tvandinther/libsql-client-dotnet</PackageProjectUrl>
+        <PackageLicense>https://raw.githubusercontent.com/tvandinther/libsql-client-dotnet/master/LICENSE</PackageLicense>
+        <RepositoryUrl>https://github.com/tvandinther/libsql-client-dotnet</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>libsql, client, sqld, turso</PackageTags>
+    </PropertyGroup>
+
+    <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
