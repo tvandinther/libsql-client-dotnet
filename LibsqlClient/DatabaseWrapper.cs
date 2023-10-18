@@ -5,7 +5,7 @@ using LibsqlClient.Extensions;
 
 namespace LibsqlClient;
 
-internal class DatabaseWrapper : IDatabaseClient
+internal class DatabaseWrapper : IDatabaseClient, IDisposable
 {
     private libsql_database_t _db;
     private libsql_connection_t _connection;
@@ -74,5 +74,22 @@ internal class DatabaseWrapper : IDatabaseClient
     public Task<ResultSet> Execute(string sql, params object[] args)
     {
         throw new NotImplementedException();
+    }
+
+    private void ReleaseUnmanagedResources()
+    {
+        Libsql.libsql_disconnect(_connection);
+        Libsql.libsql_close(_db);
+    }
+
+    public void Dispose()
+    {
+        ReleaseUnmanagedResources();
+        GC.SuppressFinalize(this);
+    }
+
+    ~DatabaseWrapper()
+    {
+        ReleaseUnmanagedResources();
     }
 }
