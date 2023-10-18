@@ -1,4 +1,4 @@
-﻿using LibsqlClient;
+﻿using Libsql.Client;
 
 var dbClient = DatabaseClient.Create();
 

@@ -1,7 +1,7 @@
 ﻿// using System.Runtime.InteropServices;
 // using Bindings;
 //
-// namespace LibsqlClient;
+// namespace Libsql.Client;
 //
 // internal static class ResultSetExtensions
 // {

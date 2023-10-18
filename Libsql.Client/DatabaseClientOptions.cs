@@ -1,4 +1,4 @@
-﻿namespace LibsqlClient;
+﻿namespace Libsql.Client;
 
 public class DatabaseClientOptions
 {

@@ -1,4 +1,4 @@
-namespace LibsqlClient.Test;
+namespace Libsql.Client.Test;
 
 public class SelectTests
 {

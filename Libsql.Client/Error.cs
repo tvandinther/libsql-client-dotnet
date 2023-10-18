@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace LibsqlClient;
+namespace Libsql.Client;
 
 internal unsafe struct Error
 {

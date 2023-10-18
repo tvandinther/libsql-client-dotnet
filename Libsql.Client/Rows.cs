@@ -1,9 +1,8 @@
 ﻿using System.Collections;
 using System.Diagnostics;
-using Bindings;
-using LibsqlClient.Extensions;
+using Libsql.Client.Extensions;
 
-namespace LibsqlClient;
+namespace Libsql.Client;
 
 internal class Rows : IEnumerable<IEnumerable<Value>>
 {
@@ -42,14 +41,14 @@ internal class RowsEnumerator : IEnumerator<IEnumerable<Value>>
 
         unsafe
         {
-            var columnCount = Libsql.libsql_column_count(_libsqlRowsT);
+            var columnCount = Bindings.libsql_column_count(_libsqlRowsT);
             _enumeratorData.ColumnTypes = new ValueType[columnCount];
             
             for (var i = 0; i < columnCount; i++)
             {
                 int columnType;
                 var error = new Error();
-                var errorCode = Libsql.libsql_column_type(_libsqlRowsT, i, &columnType, &error.Ptr);
+                var errorCode = Bindings.libsql_column_type(_libsqlRowsT, i, &columnType, &error.Ptr);
                 error.ThrowIfNonZero(errorCode, "Failed to get column type");
                 _enumeratorData.ColumnTypes![i] = (ValueType)columnType;
             }
@@ -78,14 +77,14 @@ internal class RowsEnumerator : IEnumerator<IEnumerable<Value>>
             var row = new libsql_row_t();
             var error = new Error();
             var parsedRow = new Value[_enumeratorData.ColumnTypes!.Length];
-            var exitCode = Libsql.libsql_next_row(_libsqlRowsT, &row, &error.Ptr);
+            var exitCode = Bindings.libsql_next_row(_libsqlRowsT, &row, &error.Ptr);
             
             error.ThrowIfNonZero(exitCode, "Failed to get next row");
             
             if (row.ptr is null)
             {
                 _enumeratorData.FullyParsed = true;
-                Libsql.libsql_free_rows(_libsqlRowsT);
+                Bindings.libsql_free_rows(_libsqlRowsT);
                 return false;
             }
             
@@ -104,7 +103,7 @@ internal class RowsEnumerator : IEnumerator<IEnumerable<Value>>
                 parsedRow[i] = value;
             }
             
-            Libsql.libsql_free_row(row);
+            Bindings.libsql_free_row(row);
             _enumeratorData.ParsedRows!.Add(parsedRow);
             Current = parsedRow;
             

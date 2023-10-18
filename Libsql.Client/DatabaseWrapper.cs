@@ -1,9 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Text;
-using Bindings;
-using LibsqlClient.Extensions;
+using Libsql.Client.Extensions;
 
-namespace LibsqlClient;
+namespace Libsql.Client;
 
 internal class DatabaseWrapper : IDatabaseClient, IDisposable
 {
@@ -25,7 +24,7 @@ internal class DatabaseWrapper : IDatabaseClient, IDisposable
             fixed (byte* urlPtr = Encoding.UTF8.GetBytes(url))
             {
                 Console.WriteLine($"Passing {(int)urlPtr} to libsql_open_ext");
-                exitCode = Libsql.libsql_open_ext(urlPtr, dbPtr, &error.Ptr);   
+                exitCode = Bindings.libsql_open_ext(urlPtr, dbPtr, &error.Ptr);   
             }
         }
         
@@ -41,7 +40,7 @@ internal class DatabaseWrapper : IDatabaseClient, IDisposable
         
         fixed (libsql_connection_t* connectionPtr = &_connection)
         {
-            exitCode = Libsql.libsql_connect(_db, connectionPtr, &error.Ptr);
+            exitCode = Bindings.libsql_connect(_db, connectionPtr, &error.Ptr);
         }
         
         error.ThrowIfNonZero(exitCode, "Failed to connect to database");
@@ -57,7 +56,7 @@ internal class DatabaseWrapper : IDatabaseClient, IDisposable
             
             fixed (byte* sqlPtr = Encoding.UTF8.GetBytes(sql))
             {
-                exitCode = Libsql.libsql_execute(_connection, sqlPtr, &rows, &error.Ptr);
+                exitCode = Bindings.libsql_execute(_connection, sqlPtr, &rows, &error.Ptr);
             }
             
             error.ThrowIfNonZero(exitCode, "Failed to execute query");
@@ -78,8 +77,8 @@ internal class DatabaseWrapper : IDatabaseClient, IDisposable
 
     private void ReleaseUnmanagedResources()
     {
-        Libsql.libsql_disconnect(_connection);
-        Libsql.libsql_close(_db);
+        Bindings.libsql_disconnect(_connection);
+        Bindings.libsql_close(_db);
     }
 
     public void Dispose()

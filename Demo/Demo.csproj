@@ -16,7 +16,7 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\LibsqlClient\LibsqlClient.csproj" />
+    <ProjectReference Include="..\Libsql.Client\Libsql.Client.csproj" />
   </ItemGroup>
 
 </Project>

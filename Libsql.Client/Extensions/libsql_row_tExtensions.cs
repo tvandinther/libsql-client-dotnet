@@ -1,7 +1,6 @@
 ﻿using System.Runtime.InteropServices;
-using Bindings;
 
-namespace LibsqlClient.Extensions;
+namespace Libsql.Client.Extensions;
 
 internal static class libsql_row_tExtensions
 {
@@ -9,7 +8,7 @@ internal static class libsql_row_tExtensions
     {
         var error = new Error();
         long value;
-        var exitCode = Libsql.libsql_get_int(row, columnIndex, &value, &error.Ptr);
+        var exitCode = Bindings.libsql_get_int(row, columnIndex, &value, &error.Ptr);
             
         error.ThrowIfNonZero(exitCode, "Failed to get INTEGER");
             
@@ -20,12 +19,13 @@ internal static class libsql_row_tExtensions
     {
         var error = new Error();
         var ptr = (byte*)0;
-        var exitCode = Libsql.libsql_get_string(row, columnIndex, &ptr, &error.Ptr);
+        Bindings.libsql_free_string(ptr);
+        var exitCode = Bindings.libsql_get_string(row, columnIndex, &ptr, &error.Ptr);
             
         error.ThrowIfNonZero(exitCode, "Failed to get TEXT");
             
         var text = Marshal.PtrToStringAuto((IntPtr)ptr);
-        Libsql.libsql_free_string(ptr);
+        Bindings.libsql_free_string(ptr);
 
         if (text is null)
         {
@@ -39,7 +39,7 @@ internal static class libsql_row_tExtensions
     {
         var error = new Error();
         double value;
-        var exitCode = Libsql.libsql_get_float(row, columnIndex, &value, &error.Ptr);
+        var exitCode = Bindings.libsql_get_float(row, columnIndex, &value, &error.Ptr);
             
         error.ThrowIfNonZero(exitCode, "Failed to get REAL");
             
@@ -50,13 +50,13 @@ internal static class libsql_row_tExtensions
     {
         var error = new Error();
         var blob = new blob();
-        var exitCode = Libsql.libsql_get_blob(row, columnIndex, &blob, &error.Ptr);
+        var exitCode = Bindings.libsql_get_blob(row, columnIndex, &blob, &error.Ptr);
             
         error.ThrowIfNonZero(exitCode, "Failed to get BLOB");
             
         var bytes = new byte[blob.len];
         Marshal.Copy((IntPtr) blob.ptr, bytes, 0, blob.len);
-        Libsql.libsql_free_blob(blob);
+        Bindings.libsql_free_blob(blob);
             
         return new Blob(bytes);
     }

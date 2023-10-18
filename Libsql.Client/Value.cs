@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
-namespace LibsqlClient;
+namespace Libsql.Client;
 
 public abstract record Value;
 
