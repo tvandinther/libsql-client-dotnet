@@ -38,8 +38,8 @@ if ! git config remote.origin.url &> /dev/null;then
   git remote add --no-fetch origin "https://github.com/tursodatabase/libsql.git"
 fi
 
-git sparse-checkout init
-git sparse-checkout set bindings/c bindings/wasm libsql libsql-sys
+# git sparse-checkout init
+# git sparse-checkout set bindings/c bindings/wasm libsql libsql-sys
 # -----
 git fetch --quiet --depth 1 origin
 git checkout main
