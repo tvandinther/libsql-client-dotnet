@@ -28,6 +28,7 @@ function run_if_force {
 }
 
 run_if_force rm -rf "${bindings_dir}/libsql"
+run_if_force rm -rf "${bindings_dir}/target"
 mkdir -p "${bindings_dir}/libsql"
 
 cd "${bindings_dir}/libsql"
@@ -37,10 +38,10 @@ if ! git config remote.origin.url &> /dev/null;then
   git remote add --no-fetch origin "https://github.com/tursodatabase/libsql.git"
 fi
 
-git sparse-checkout init
-git sparse-checkout set "crates"
+# git sparse-checkout init
+# git sparse-checkout set bindings/c bindings/wasm libsql libsql-sys
 # -----
-git fetch --depth 1 origin
+git fetch --quiet --depth 1 origin
 git checkout main
 # -----
 # git fetch --depth 1 origin tag v${LIBSQL_VERSION}

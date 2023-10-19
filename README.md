@@ -1,4 +1,4 @@
-﻿# libsql-client-dotnet
+﻿# Libsql.Client
 
 A .NET client library for libsql.
 

@@ -1,0 +1,39 @@
+name: publish to nuget
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+jobs:
+  publish:
+    name: build, pack & publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Assert tag matches project version
+        run: |
+          tag=$(git describe --tags)
+          version=$(grep -Po '(?<=<PackageVersion>)[^<]+' Libsql.Client/Libsql.Client.csproj)
+          if [ ${GITHUB_REF_NAME} != "v$version" ]; then
+            echo "Tag '$tag' does not match project version '$version'"
+            exit 1
+          fi
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: "7.0.x"
+
+      - name: Generate bindings
+        run: ./generate-bindings.sh
+
+      # Publish
+      - name: publish on version change
+        id: publish_nuget
+        uses: alirezanet/publish-nuget@v3.1.0
+        with:
+          PROJECT_FILE_PATH: Libsql.Client/Libsql.Client.csproj
+          VERSION_REGEX: ^\s*<PackageVersion>(.*)<\/PackageVersion>\s*$
+          TAG_COMMIT: true
+          TAG_FORMAT: "v*"
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
