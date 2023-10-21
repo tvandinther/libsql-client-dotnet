@@ -1,4 +1,4 @@
-﻿namespace Libsql.Client.Test;
+﻿namespace Libsql.Client.Tests;
 
 public class RowsTests
 {

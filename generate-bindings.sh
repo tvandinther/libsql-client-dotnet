@@ -41,8 +41,8 @@ fi
 # git sparse-checkout init
 # git sparse-checkout set bindings/c bindings/wasm libsql libsql-sys
 # -----
-git fetch --quiet --depth 1 origin
-git checkout main
+git fetch --quiet origin
+git checkout 8e321cf0
 # -----
 # git fetch --depth 1 origin tag v${LIBSQL_VERSION}
 # git reset --hard tags/v${LIBSQL_VERSION}

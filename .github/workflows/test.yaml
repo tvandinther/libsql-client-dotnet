@@ -1,4 +1,4 @@
-name: dotnet test
+name: Test
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - master
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,7 +23,19 @@ jobs:
       - name: Install dependencies
         run: dotnet restore
 
+      - name: Cache Rust Bindings
+        id: cache-rust-bindings
+        uses: actions/cache@v2
+        with:
+          path: |
+            rust-bindings/target/release/libcsharp_bindings.*
+            rust-bindings/csharp-bindings/bindings/Libsql.g.cs
+          key: rust-bindings-${{ hashFiles('./generate-bindings.sh') }}
+          restore-keys: |
+            rust-bindings-
+
       - name: Generate bindings
+        if: steps.cache-rust-bindings.outputs.cache-hit != 'true'
         run: ./generate-bindings.sh
 
       - name: Build

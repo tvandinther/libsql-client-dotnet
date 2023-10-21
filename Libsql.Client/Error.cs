@@ -1,22 +1,19 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
-namespace Libsql.Client;
-
-internal unsafe struct Error
+namespace Libsql.Client
 {
-    public readonly byte* Ptr;
-    
-    public Error()
+    internal unsafe struct Error
     {
-        Ptr = (byte*)0;
-    }
+        public byte* Ptr;
 
-    public unsafe void ThrowIfNonZero(int exitCode, string message)
-    {
-        if (exitCode == 0) return;
+        public unsafe void ThrowIfNonZero(int exitCode, string message)
+        {
+            if (exitCode == 0) return;
         
-        var text = Marshal.PtrToStringAuto((IntPtr)Ptr);
+            var text = Marshal.PtrToStringAuto((IntPtr)Ptr);
         
-        throw new Exception($"{message}: {text}");
+            throw new Exception($"{message}: {text}");
+        }
     }
 }

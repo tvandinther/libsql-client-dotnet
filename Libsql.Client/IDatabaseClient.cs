@@ -1,7 +1,10 @@
-namespace Libsql.Client;
+using System.Threading.Tasks;
 
-public interface IDatabaseClient
+namespace Libsql.Client
 {
-    public Task<ResultSet> Execute(string sql);
-    public Task<ResultSet> Execute(string sql, params object[] args);
+    public interface IDatabaseClient
+    {
+        Task<ResultSet> Execute(string sql);
+        Task<ResultSet> Execute(string sql, params object[] args);
+    }
 }
