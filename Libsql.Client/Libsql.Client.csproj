@@ -4,7 +4,7 @@
         <Title>Libsql.Client</Title>
         <Authors>Tom van Dinther</Authors>
         <Description>A client library for Libsql</Description>
-        <PackageVersion>0.1.0</PackageVersion>
+        <PackageVersion>0.1.1</PackageVersion>
         <Copyright>Copyright (c) Tom van Dinther 2023</Copyright>
         <PackageProjectUrl>https://github.com/tvandinther/libsql-client-dotnet</PackageProjectUrl>
         <PackageLicense>https://raw.githubusercontent.com/tvandinther/libsql-client-dotnet/master/LICENSE</PackageLicense>
@@ -32,11 +32,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Include="$(NativeOutputPath)libcsharp_bindings.so" CopyToOutputDirectory="PreserveNewest" />
+        <Content Include="$(NativeOutputPath)libcsharp_bindings.so" CopyToOutputDirectory="PreserveNewest" />
         
-<!--        <None Condition="$([MSBuild]::IsOsPlatform('MacOS'))" Include="$(NativeOutputPath)libclient_lib.dylib" CopyToOutputDirectory="PreserveNewest" />-->
-<!--        <None Condition="$([MSBuild]::IsOsPlatform('Linux'))" Include="$(NativeOutputPath)libcsharp_bindings.so" CopyToOutputDirectory="PreserveNewest" />-->
-<!--        <None Condition="$([MSBuild]::IsOsPlatform('Windows'))" Include="$(NativeOutputPath)libcsharp_bindings.so" CopyToOutputDirectory="PreserveNewest" />-->
+<!--        <Content Condition="$([MSBuild]::IsOsPlatform('MacOS'))" Include="$(NativeOutputPath)libclient_lib.dylib" CopyToOutputDirectory="PreserveNewest" />-->
+<!--        <Content Condition="$([MSBuild]::IsOsPlatform('Linux'))" Include="$(NativeOutputPath)libcsharp_bindings.so" CopyToOutputDirectory="PreserveNewest" />-->
+<!--        <Content Condition="$([MSBuild]::IsOsPlatform('Windows'))" Include="$(NativeOutputPath)libcsharp_bindings.so" CopyToOutputDirectory="PreserveNewest" />-->
     </ItemGroup>
 
     <ItemGroup>
