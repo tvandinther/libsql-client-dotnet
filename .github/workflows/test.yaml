@@ -23,7 +23,17 @@ jobs:
       - name: Install dependencies
         run: dotnet restore
 
+      - name: Cache Rust bindings
+        id: cache-rust-bindings
+        uses: actions/cache@v2
+        with:
+          path: rust-bindings/target/release/libcsharp_bindings.*
+          key: rust-bindings-${{ hashFiles('./generate-bindings.sh') }}
+          restore-keys: |
+            rust-bindings-
+
       - name: Generate bindings
+        if: steps.cache-rust-bindings.outputs.cache-hit != 'true'
         run: ./generate-bindings.sh
 
       - name: Build
