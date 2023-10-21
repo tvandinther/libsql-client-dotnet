@@ -1,18 +1,17 @@
-name: publish to nuget
+name: Publish to Nuget
 on:
   push:
     tags:
       - "v[0-9]+.[0-9]+.[0-9]+"
 jobs:
   publish:
-    name: build, pack & publish
+    name: Build, Pack & Publish
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
       - name: Assert tag matches project version
         run: |
-          tag=$(git describe --tags)
           version=$(grep -Po '(?<=<PackageVersion>)[^<]+' Libsql.Client/Libsql.Client.csproj)
           if [ ${GITHUB_REF_NAME} != "v$version" ]; then
             echo "Tag '$tag' does not match project version '$version'"
@@ -24,16 +23,26 @@ jobs:
         with:
           dotnet-version: "7.0.x"
 
+      - name: Cache Rust Bindings
+        id: cache-rust-bindings
+        uses: actions/cache@v2
+        with:
+          path: |
+            rust-bindings/target/release/libcsharp_bindings.*
+            rust-bindings/csharp-bindings/bindings/Libsql.g.cs
+          key: rust-bindings-${{ hashFiles('./generate-bindings.sh') }}
+          restore-keys: |
+            rust-bindings-
+
       - name: Generate bindings
         run: ./generate-bindings.sh
 
-      # Publish
-      - name: publish on version change
-        id: publish_nuget
+      - name: Publish
+        id: publish-nuget
         uses: alirezanet/publish-nuget@v3.1.0
         with:
           PROJECT_FILE_PATH: Libsql.Client/Libsql.Client.csproj
           VERSION_REGEX: ^\s*<PackageVersion>(.*)<\/PackageVersion>\s*$
-          TAG_COMMIT: true
+          TAG_COMMIT: false
           TAG_FORMAT: "v*"
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
