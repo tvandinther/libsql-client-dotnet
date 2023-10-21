@@ -35,7 +35,7 @@ jobs:
             rust-bindings-
 
       - name: Generate bindings
-        if: steps.cache-rust-libraries.outputs.cache-hit != 'true' || steps.cache-rust-bindings.outputs.cache-hit != 'true'
+        if: steps.cache-rust-bindings.outputs.cache-hit != 'true'
         run: ./generate-bindings.sh
 
       - name: Build
