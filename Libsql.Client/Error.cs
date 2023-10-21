@@ -5,12 +5,7 @@ namespace Libsql.Client
 {
     internal unsafe struct Error
     {
-        public readonly byte* Ptr;
-    
-        public Error(int ptr = 0)
-        {
-            Ptr = (byte*)ptr;
-        }
+        public byte* Ptr;
 
         public unsafe void ThrowIfNonZero(int exitCode, string message)
         {

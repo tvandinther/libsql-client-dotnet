@@ -10,7 +10,6 @@ namespace Libsql.Client
     {
         private libsql_database_t _db;
         private libsql_connection_t _connection;
-        private readonly DatabaseType _type = DatabaseType.InMemory;
 
         public unsafe DatabaseWrapper(string url)
         {
