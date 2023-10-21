@@ -7,7 +7,7 @@ namespace Libsql.Client
     {
         public byte[] Value { get; }
 
-        public Blob(byte[] value)
+        internal Blob(byte[] value)
         {
             Value = value;
         }

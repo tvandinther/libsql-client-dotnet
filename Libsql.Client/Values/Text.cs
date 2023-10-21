@@ -6,7 +6,7 @@ namespace Libsql.Client
     {
         public string Value { get; }
 
-        public Text(string value)
+        internal Text(string value)
         {
             Value = value;
         }

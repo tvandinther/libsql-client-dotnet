@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Libsql.Client", "Libsql.Cli
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "Demo\Demo.csproj", "{2AE44CD1-CAB3-4547-9B95-965121369883}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Libsql.Client.Test", "Libsql.Client.Test\Libsql.Client.Test.csproj", "{99E8754E-A898-48C2-B3A2-098EA08A4627}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Libsql.Client.Tests", "Libsql.Client.Tests\Libsql.Client.Tests.csproj", "{99E8754E-A898-48C2-B3A2-098EA08A4627}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

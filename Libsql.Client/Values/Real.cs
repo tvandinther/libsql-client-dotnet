@@ -7,7 +7,7 @@ namespace Libsql.Client
     {
         public double Value { get; }
 
-        public Real(double value)
+        internal Real(double value)
         {
             Value = value;
         }

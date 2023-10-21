@@ -32,9 +32,11 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <None Include="$(NativeOutputPath)libcsharp_bindings.so" CopyToOutputDirectory="PreserveNewest" />
+        
 <!--        <None Condition="$([MSBuild]::IsOsPlatform('MacOS'))" Include="$(NativeOutputPath)libclient_lib.dylib" CopyToOutputDirectory="PreserveNewest" />-->
-        <None Condition="$([MSBuild]::IsOsPlatform('Linux'))" Include="$(NativeOutputPath)libcsharp_bindings.so" CopyToOutputDirectory="PreserveNewest" />
-        <None Condition="$([MSBuild]::IsOsPlatform('Windows'))" Include="$(NativeOutputPath)libcsharp_bindings.so" CopyToOutputDirectory="PreserveNewest" />
+<!--        <None Condition="$([MSBuild]::IsOsPlatform('Linux'))" Include="$(NativeOutputPath)libcsharp_bindings.so" CopyToOutputDirectory="PreserveNewest" />-->
+<!--        <None Condition="$([MSBuild]::IsOsPlatform('Windows'))" Include="$(NativeOutputPath)libcsharp_bindings.so" CopyToOutputDirectory="PreserveNewest" />-->
     </ItemGroup>
 
     <ItemGroup>
@@ -46,5 +48,11 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>$(AssemblyName).Tests</_Parameter1>
+        </AssemblyAttribute>
     </ItemGroup>
 </Project>
