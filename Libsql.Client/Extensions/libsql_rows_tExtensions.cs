@@ -1,36 +1,39 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
-namespace Libsql.Client.Extensions;
-
-internal static class libsql_rows_tExtensions
+namespace Libsql.Client.Extensions
 {
-    public static IEnumerable<string> GetColumnNames(this libsql_rows_t libsqlRowsT)
+    internal static class libsql_rows_tExtensions
     {
-        unsafe
+        public static IEnumerable<string> GetColumnNames(this libsql_rows_t libsqlRowsT)
         {
-            var columnCount = Bindings.libsql_column_count(libsqlRowsT);
-            var columnNames = new string[columnCount];
-            
-            for (var i = 0; i < columnCount; i++)
+            unsafe
             {
-                var error = new Error();
-                var ptr = (byte*)0;
-                var exitCode = Bindings.libsql_column_name(libsqlRowsT, i, &ptr, &error.Ptr);
-                
-                error.ThrowIfNonZero(exitCode, "Failed to get column name");
-                
-                var text = Marshal.PtrToStringAuto((IntPtr)ptr);
-                Bindings.libsql_free_string(ptr);
-                
-                if (text is null)
-                {
-                    throw new InvalidOperationException("Text was marshalled to null");   
-                }
-                
-                columnNames[i] = text;
-            }
+                var columnCount = Bindings.libsql_column_count(libsqlRowsT);
+                var columnNames = new string[columnCount];
             
-            return columnNames;
+                for (var i = 0; i < columnCount; i++)
+                {
+                    var error = new Error();
+                    var ptr = (byte*)0;
+                    var exitCode = Bindings.libsql_column_name(libsqlRowsT, i, &ptr, &error.Ptr);
+                
+                    error.ThrowIfNonZero(exitCode, "Failed to get column name");
+                
+                    var text = Marshal.PtrToStringAuto((IntPtr)ptr);
+                    Bindings.libsql_free_string(ptr);
+                
+                    if (text is null)
+                    {
+                        throw new InvalidOperationException("Text was marshalled to null");   
+                    }
+                
+                    columnNames[i] = text;
+                }
+            
+                return columnNames;
+            }
         }
     }
 }

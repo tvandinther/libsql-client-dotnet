@@ -1,7 +1,8 @@
-namespace Libsql.Client;
-
-internal enum DatabaseType
+namespace Libsql.Client
 {
-    InMemory
+    internal enum DatabaseType
+    {
+        InMemory
+    }
 }
 
