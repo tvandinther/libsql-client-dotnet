@@ -32,11 +32,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Content Include="$(NativeOutputPath)libcsharp_bindings.so" CopyToOutputDirectory="PreserveNewest" />
-        
-<!--        <Content Condition="$([MSBuild]::IsOsPlatform('MacOS'))" Include="$(NativeOutputPath)libclient_lib.dylib" CopyToOutputDirectory="PreserveNewest" />-->
-<!--        <Content Condition="$([MSBuild]::IsOsPlatform('Linux'))" Include="$(NativeOutputPath)libcsharp_bindings.so" CopyToOutputDirectory="PreserveNewest" />-->
-<!--        <Content Condition="$([MSBuild]::IsOsPlatform('Windows'))" Include="$(NativeOutputPath)libcsharp_bindings.so" CopyToOutputDirectory="PreserveNewest" />-->
+        <Content Include="$(NativeOutputPath)libcsharp_bindings.so">
+            <PackagePath>runtimes/linux-x64/native/libcsharp_bindings.so</PackagePath>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+<!--        <Content Include="$(NativeOutputPath)libcsharp_bindings.dll">-->
+<!--            <PackagePath>runtimes/win-x64/native/libcsharp_bindings.dll</PackagePath>-->
+<!--            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>-->
+<!--        </Content>-->
+<!--        <Content Include="$(NativeOutputPath)libclient_lib.dylib">-->
+<!--            <PackagePath>runtimes/osx-x64/native/libclient_lib.dylib</PackagePath>-->
+<!--            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>-->
+<!--        </Content>-->
     </ItemGroup>
 
     <ItemGroup>
