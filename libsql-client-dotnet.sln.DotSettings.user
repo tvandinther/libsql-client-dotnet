@@ -1,21 +1,21 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=c6cd8f74_002Da4a8_002D458e_002D8ceb_002D89595cc36d60/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="SelectIntType" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;TestAncestor&gt;
-    &lt;TestId&gt;xUnit::99E8754E-A898-48C2-B3A2-098EA08A4627::net7.0::Libsql.Client.Test.SelectTests.SelectIntType&lt;/TestId&gt;
-  &lt;/TestAncestor&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=c6cd8f74_002Da4a8_002D458e_002D8ceb_002D89595cc36d60/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="SelectIntType" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::99E8754E-A898-48C2-B3A2-098EA08A4627::net7.0::Libsql.Client.Test.SelectTests.SelectIntType&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=cbe5a8a2_002D777f_002D488e_002Db6b2_002Dd0e7ac2deb39/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ValueType_Null_AreNotEqual" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;TestAncestor&gt;
-    &lt;TestId&gt;xUnit::99E8754E-A898-48C2-B3A2-098EA08A4627::net7.0::Libsql.Client.Tests.ValueEquality.BlobTests.ValueType_Null_AreNotEqual&lt;/TestId&gt;
-  &lt;/TestAncestor&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=cbe5a8a2_002D777f_002D488e_002Db6b2_002Dd0e7ac2deb39/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ValueType_Null_AreNotEqual" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::99E8754E-A898-48C2-B3A2-098EA08A4627::net7.0::Libsql.Client.Tests.ValueEquality.BlobTests.ValueType_Null_AreNotEqual&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=d696e112_002D4a51_002D4ba1_002Db815_002D3563ee75aeca/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ValueType_Null_AreNotEqual #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;TestAncestor&gt;
-    &lt;TestId&gt;xUnit::99E8754E-A898-48C2-B3A2-098EA08A4627::net7.0::Libsql.Client.Tests.ValueEquality.BlobTests.ValueType_Null_AreNotEqual&lt;/TestId&gt;
-  &lt;/TestAncestor&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=d696e112_002D4a51_002D4ba1_002Db815_002D3563ee75aeca/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ValueType_Null_AreNotEqual #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::99E8754E-A898-48C2-B3A2-098EA08A4627::net7.0::Libsql.Client.Tests.ValueEquality.BlobTests.ValueType_Null_AreNotEqual&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=d70c695a_002D1d45_002D4200_002Dad7c_002Db1a3b87e7c56/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="SelectTextType" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;TestAncestor&gt;
-    &lt;TestId&gt;xUnit::99E8754E-A898-48C2-B3A2-098EA08A4627::net7.0::Libsql.Client.Test.SelectTests.SelectTextType&lt;/TestId&gt;
-  &lt;/TestAncestor&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=d70c695a_002D1d45_002D4200_002Dad7c_002Db1a3b87e7c56/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="SelectTextType" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::99E8754E-A898-48C2-B3A2-098EA08A4627::net7.0::Libsql.Client.Test.SelectTests.SelectTextType&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

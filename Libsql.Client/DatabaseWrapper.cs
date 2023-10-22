@@ -46,31 +46,34 @@ namespace Libsql.Client
             error.ThrowIfNonZero(exitCode, "Failed to connect to database");
         }
     
-        public unsafe Task<ResultSet> Execute(string sql)
+        public async Task<IResultSet> Execute(string sql)
         {
-            return Task.Run(() =>
+            return await Task.Run(() =>
             {
-                var error = new Error();
-                var rows = new libsql_rows_t();
-                int exitCode;
-            
-                fixed (byte* sqlPtr = Encoding.UTF8.GetBytes(sql))
+                unsafe
                 {
-                    exitCode = Bindings.libsql_execute(_connection, sqlPtr, &rows, &error.Ptr);
+                    var error = new Error();
+                    var rows = new libsql_rows_t();
+                    int exitCode;
+            
+                    fixed (byte* sqlPtr = Encoding.UTF8.GetBytes(sql))
+                    {
+                        exitCode = Bindings.libsql_execute(_connection, sqlPtr, &rows, &error.Ptr);
+                    }
+            
+                    error.ThrowIfNonZero(exitCode, "Failed to execute query");
+            
+                    return new ResultSet(
+                        0,
+                        0,
+                        rows.GetColumnNames(),
+                        new Rows(rows)
+                    );   
                 }
-            
-                error.ThrowIfNonZero(exitCode, "Failed to execute query");
-            
-                return new ResultSet(
-                    0,
-                    0,
-                    rows.GetColumnNames(),
-                    new Rows(rows)
-                );
             });
         }
 
-        public Task<ResultSet> Execute(string sql, params object[] args)
+        public Task<IResultSet> Execute(string sql, params object[] args)
         {
             throw new NotImplementedException();
         }
