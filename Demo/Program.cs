@@ -1,6 +1,8 @@
 ﻿using Libsql.Client;
 
-var dbClient = DatabaseClient.Create();
+var dbClient = DatabaseClient.Create(opts => {
+    opts.Url = ":memory:";
+});
 
 var rs = await dbClient.Execute("CREATE TABLE IF NOT EXISTS `users` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `height` REAL, `data` BLOB)");
 

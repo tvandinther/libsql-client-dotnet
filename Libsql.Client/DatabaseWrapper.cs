@@ -11,14 +11,32 @@ namespace Libsql.Client
         private libsql_database_t _db;
         private libsql_connection_t _connection;
 
-        public unsafe DatabaseWrapper(string url)
+        public unsafe DatabaseWrapper(DatabaseClientOptions options)
         {
-            Debug.Assert(url != null, "url is null");
+            Debug.Assert(options.Url != null, "url is null");
+
+            if (!(options.Url == "" || options.Url == ":memory:"))
+            {
+                try
+                {
+                    var uri = new Uri(options.Url);
+                    switch (uri.Scheme)
+                    {
+                        case "http":
+                        case "https":
+                        case "ws":
+                        case "wss":
+                            throw new LibsqlException($"{uri.Scheme}:// is not yet supported");
+                    }
+                }
+                catch (UriFormatException) { }
+            }
+
+            // C# empty strings have null pointers, so we need to give the url some meat.
+            var url = options.Url is "" ? "\0" : options.Url;
+
             var error = new Error();
             int exitCode;
-        
-            // C# empty strings have null pointers, so we need to give the urln it some meat.
-            if (url is "") url = "\0";
         
             fixed (libsql_database_t* dbPtr = &_db)
             {
