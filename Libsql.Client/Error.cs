@@ -13,7 +13,7 @@ namespace Libsql.Client
         
             var text = Marshal.PtrToStringAuto((IntPtr)Ptr);
         
-            throw new Exception($"{message}: {text}");
+            throw new LibsqlException($"{message}: {text}");
         }
     }
 }

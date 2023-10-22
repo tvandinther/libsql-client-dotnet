@@ -11,14 +11,32 @@ namespace Libsql.Client
         private libsql_database_t _db;
         private libsql_connection_t _connection;
 
-        public unsafe DatabaseWrapper(string url)
+        public unsafe DatabaseWrapper(DatabaseClientOptions options)
         {
-            Debug.Assert(url != null, "url is null");
+            Debug.Assert(options.Url != null, "url is null");
+
+            if (!(options.Url == "" || options.Url == ":memory:"))
+            {
+                try
+                {
+                    var uri = new Uri(options.Url);
+                    switch (uri.Scheme)
+                    {
+                        case "http":
+                        case "https":
+                        case "ws":
+                        case "wss":
+                            throw new LibsqlException($"{uri.Scheme}:// is not yet supported");
+                    }
+                }
+                catch (UriFormatException) { }
+            }
+
+            // C# empty strings have null pointers, so we need to give the url some meat.
+            var url = options.Url is "" ? "\0" : options.Url;
+
             var error = new Error();
             int exitCode;
-        
-            // C# empty strings have null pointers, so we need to give the urln it some meat.
-            if (url is "") url = "\0";
         
             fixed (libsql_database_t* dbPtr = &_db)
             {
@@ -46,31 +64,34 @@ namespace Libsql.Client
             error.ThrowIfNonZero(exitCode, "Failed to connect to database");
         }
     
-        public unsafe Task<ResultSet> Execute(string sql)
+        public async Task<IResultSet> Execute(string sql)
         {
-            return Task.Run(() =>
+            return await Task.Run(() =>
             {
-                var error = new Error();
-                var rows = new libsql_rows_t();
-                int exitCode;
-            
-                fixed (byte* sqlPtr = Encoding.UTF8.GetBytes(sql))
+                unsafe
                 {
-                    exitCode = Bindings.libsql_execute(_connection, sqlPtr, &rows, &error.Ptr);
+                    var error = new Error();
+                    var rows = new libsql_rows_t();
+                    int exitCode;
+            
+                    fixed (byte* sqlPtr = Encoding.UTF8.GetBytes(sql))
+                    {
+                        exitCode = Bindings.libsql_execute(_connection, sqlPtr, &rows, &error.Ptr);
+                    }
+            
+                    error.ThrowIfNonZero(exitCode, "Failed to execute query");
+            
+                    return new ResultSet(
+                        0,
+                        0,
+                        rows.GetColumnNames(),
+                        new Rows(rows)
+                    );   
                 }
-            
-                error.ThrowIfNonZero(exitCode, "Failed to execute query");
-            
-                return new ResultSet(
-                    0,
-                    0,
-                    rows.GetColumnNames(),
-                    new Rows(rows)
-                );
             });
         }
 
-        public Task<ResultSet> Execute(string sql, params object[] args)
+        public Task<IResultSet> Execute(string sql, params object[] args)
         {
             throw new NotImplementedException();
         }

@@ -1,6 +1,8 @@
 ﻿using Libsql.Client;
 
-var dbClient = DatabaseClient.Create();
+var dbClient = DatabaseClient.Create(opts => {
+    opts.Url = ":memory:";
+});
 
 var rs = await dbClient.Execute("CREATE TABLE IF NOT EXISTS `users` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `height` REAL, `data` BLOB)");
 
@@ -12,16 +14,20 @@ Console.WriteLine("------------------------");
 Console.WriteLine(string.Join("\n", rs2.Rows.Select(row => string.Join(", ", row.Select(x => x.ToString())))));
 Console.WriteLine(string.Join("\n", rs2.Rows.Select(row => string.Join(", ", row.Select(x => x.ToString())))));
 
-var user = ToUser(rs2.Rows.First().ToArray());
+var user = ToUser(rs2.Rows.First());
 Console.WriteLine(user);
 
-User ToUser(Value[] row)
+var users = rs2.Rows.Select(ToUser);
+
+User ToUser(IEnumerable<Value> row)
 {
+    var rowArray = row.ToArray();
+
     if (
-        row[0] is Integer { Value: var id } && 
-        row[1] is Text { Value: var name } && 
-        row[2] is Real { Value: var height } && 
-        row[3] is Blob { Value: var data })
+        rowArray[0] is Integer { Value: var id } && 
+        rowArray[1] is Text { Value: var name } && 
+        rowArray[2] is Real { Value: var height } && 
+        rowArray[3] is Blob { Value: var data })
     {
         return new User(id, name, height, data);   
     }

@@ -2,8 +2,14 @@
 
 namespace Libsql.Client
 {
+    /// <summary>
+    /// Represents a TEXT value in a database row.
+    /// </summary>
     public class Text : Value, IEquatable<Text>
     {
+        /// <summary>
+        /// The text value.
+        /// </summary>
         public string Value { get; }
 
         internal Text(string value)

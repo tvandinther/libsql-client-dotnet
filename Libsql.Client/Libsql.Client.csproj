@@ -4,7 +4,7 @@
         <Title>Libsql.Client</Title>
         <Authors>Tom van Dinther</Authors>
         <Description>A client library for Libsql</Description>
-        <PackageVersion>0.2.0</PackageVersion>
+        <PackageVersion>0.2.1</PackageVersion>
         <Copyright>Copyright (c) Tom van Dinther 2023</Copyright>
         <PackageProjectUrl>https://github.com/tvandinther/libsql-client-dotnet</PackageProjectUrl>
         <PackageLicense>https://raw.githubusercontent.com/tvandinther/libsql-client-dotnet/master/LICENSE</PackageLicense>
@@ -48,13 +48,6 @@
 
     <ItemGroup>
         <Compile Include="..\rust-bindings\csharp-bindings\bindings\Libsql.g.cs" Link="Libsql.g.cs" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="csbindgen" Version="1.8.3">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>

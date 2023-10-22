@@ -2,6 +2,9 @@
 
 namespace Libsql.Client
 {
+    /// <summary>
+    /// Represents a NULL value in a database row.
+    /// </summary>
     public class Null : Value, IEquatable<Null>
     {
         internal Null() { }
