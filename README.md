@@ -21,9 +21,66 @@ A .NET client library for libsql.
 - Batched statements.
 - Transactions.
 
----
+## Usage
 
-### Progress
+For an example, see the Demo project in the repository.
+
+### Creating a Database
+
+```csharp
+// Create an in-memory database.
+var dbClient = DatabaseClient.Create(opts => {
+    opts.Url = ":memory:";
+});
+```
+
+### Executing SQL Statements
+
+```csharp
+await dbClient.Execute("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT, height REAL)");
+```
+
+### Querying the Database
+
+```csharp
+User ToUser(Value[] row)
+{
+    var rowArray = row.ToArray();
+
+    if (
+        rowArray[0] is Integer { Value: var id } && 
+        rowArray[1] is Text { Value: var name } && 
+        rowArray[2] is Real { Value: var height }
+    {
+        return new User(id, name, height);   
+    }
+
+    throw new ArgumentException();
+}
+
+var result = await dbClient.Execute("SELECT * FROM users");
+
+var users = result.Rows.Select(ToUser);
+```
+
+### Closing the Database
+
+```csharp
+dbClient.Dispose();
+```
+
+or with a `using` statement:
+
+```csharp
+using (var dbClient = DatabaseClient.Create(opts => {
+    opts.Url = ":memory:";
+}))
+{
+    // ...
+}
+```
+
+## Progress
 - A database can be created:
   - [x] In memory.
   - [x] From file.
