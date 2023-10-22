@@ -2,8 +2,14 @@
 
 namespace Libsql.Client
 {
+    /// <summary>
+    /// Represents an INTEGER value in a database row.
+    /// </summary>
     public class Integer : Value, IEquatable<Integer>
     {
+        /// <summary>
+        /// The integer value.
+        /// </summary>
         public int Value { get; }
 
         internal Integer(int value)

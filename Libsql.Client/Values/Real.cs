@@ -3,8 +3,14 @@ using System.Globalization;
 
 namespace Libsql.Client
 {
+    /// <summary>
+    /// Represents a REAL value in a database row.
+    /// </summary>
     public class Real : Value, IEquatable<Real>
     {
+        /// <summary>
+        /// The real value.
+        /// </summary>
         public double Value { get; }
 
         internal Real(double value)

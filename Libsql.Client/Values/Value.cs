@@ -2,6 +2,10 @@
 
 namespace Libsql.Client
 {
+    /// <summary>
+    /// Represents a value in a database row.
+    /// </summary>
+    /// <remarks>Type check for subclasses of <see cref="Value"/> to determine the type of the value.</remarks>
     public abstract class Value : IEquatable<Value>
     {
         public abstract override int GetHashCode();

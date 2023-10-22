@@ -3,8 +3,14 @@ using System.Text;
 
 namespace Libsql.Client
 {
+    /// <summary>
+    /// Represents a BLOB value in a database row.
+    /// </summary>
     public class Blob : Value, IEquatable<Blob>
     {
+        /// <summary>
+        /// The binary data.
+        /// </summary>
         public byte[] Value { get; }
 
         internal Blob(byte[] value)
