@@ -12,6 +12,7 @@ namespace Libsql.Client
         /// </summary>
         /// <param name="sql">The SQL query to execute.</param>
         /// <returns>The result set returned by the query.</returns>
+        /// <exception cref="LibsqlException">Thrown when the query fails to execute.</exception>
         Task<IResultSet> Execute(string sql);
 
         /// <summary>
@@ -20,6 +21,7 @@ namespace Libsql.Client
         /// <param name="sql">The SQL query to execute.</param>
         /// <param name="args">The parameters to use in the query.</param>
         /// <returns>The result set returned by the query.</returns>
+        /// <exception cref="LibsqlException">Thrown when the query fails to execute.</exception>
         Task<IResultSet> Execute(string sql, params object[] args);
     }
 }
