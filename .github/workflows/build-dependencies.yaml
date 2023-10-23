@@ -26,6 +26,7 @@ jobs:
       - name: Generate bindings
         if: steps.cache-rust-bindings.outputs.cache-hit != 'true'
         run: ./generate-bindings.sh
+        shell: bash
 
       - name: Upload dynamic libraries
         uses: actions/upload-artifact@v2
