@@ -25,7 +25,7 @@ jobs:
             rust-bindings/csharp-bindings/bindings/Libsql.g.cs
           key: ${{ runner.os }}-rust-bindings-${{ hashFiles('./generate-bindings.sh') }}
           restore-keys: |
-            rust-bindings-
+            ${{ runner.os }}-rust-bindings-
 
       - name: Generate bindings
         if: |
