@@ -30,7 +30,7 @@ jobs:
           path: |
             rust-bindings/target/release/libcsharp_bindings.*
             rust-bindings/csharp-bindings/bindings/Libsql.g.cs
-          key: rust-bindings-${{ hashFiles('./generate-bindings.sh') }}
+          key: ${{ runner.os }}-rust-bindings-${{ hashFiles('./generate-bindings.sh') }}
           restore-keys: |
             rust-bindings-
 
