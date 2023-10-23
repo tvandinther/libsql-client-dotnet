@@ -49,3 +49,5 @@ git checkout 8e321cf0
 
 cd ..
 cargo build --release
+
+ls -la rust-bindings/target/release

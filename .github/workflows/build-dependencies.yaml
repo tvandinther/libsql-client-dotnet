@@ -36,6 +36,8 @@ jobs:
       #   run: ./generate-bindings.ps1
       #   shell: pwsh
 
+      - run: ls -la rust-bindings/target/release
+
       - name: Upload dynamic libraries
         uses: actions/upload-artifact@v2
         with:
