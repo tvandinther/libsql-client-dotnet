@@ -21,7 +21,8 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            rust-bindings
+            rust-bindings/target/release/*csharp_bindings.*
+            rust-bindings/csharp-bindings/bindings/Libsql.g.cs
           key: ${{ runner.os }}-rust-bindings-${{ hashFiles('./generate-bindings.sh') }}
           restore-keys: |
             rust-bindings-
@@ -32,13 +33,6 @@ jobs:
         run: ./generate-bindings.sh
         shell: bash
 
-      # - name: Generate Bindings (Windows)
-      #   if: >
-      #     steps.cache-rust-bindings.outputs.cache-hit != 'true' &&
-      #     runner.os == "Windows"
-      #   run: ./generate-bindings.ps1
-      #   shell: pwsh
-
       - run: |
           find . -name "*.dll"
           pwd
@@ -48,11 +42,11 @@ jobs:
         shell: bash
         continue-on-error: true
 
-      - name: Upload dynamic libraries
+      - name: Upload bindings
         uses: actions/upload-artifact@v2
         with:
           name: bindings
           path: |
-            rust-bindings/target/release/libcsharp_bindings.*
+            rust-bindings/target/release/*csharp_bindings.*
             rust-bindings/csharp-bindings/bindings/Libsql.g.cs
           if-no-files-found: error
