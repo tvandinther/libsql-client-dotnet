@@ -9,11 +9,20 @@ on:
       - master
 
 jobs:
+  build-dependencies:
+    uses: ./.github/workflows/build-dependencies.yaml
+
   test:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Download bindings
+        uses: actions/download-artifact@v3
+        with:
+          name: bindings
+          path: rust-bindings
 
       - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
         uses: actions/setup-dotnet@v1.7.2
@@ -22,21 +31,6 @@ jobs:
 
       - name: Install dependencies
         run: dotnet restore
-
-      - name: Cache Rust Bindings
-        id: cache-rust-bindings
-        uses: actions/cache@v2
-        with:
-          path: |
-            rust-bindings/target/release/libcsharp_bindings.*
-            rust-bindings/csharp-bindings/bindings/Libsql.g.cs
-          key: ${{ runner.os }}-rust-bindings-${{ hashFiles('./generate-bindings.sh') }}
-          restore-keys: |
-            rust-bindings-
-
-      - name: Generate bindings
-        if: steps.cache-rust-bindings.outputs.cache-hit != 'true'
-        run: ./generate-bindings.sh
 
       - name: Build
         run: dotnet build --configuration Release --no-restore

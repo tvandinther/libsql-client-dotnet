@@ -1,0 +1,37 @@
+name: Build Dependencies
+on:
+  workflow_call:
+
+jobs:
+  build-dependencies:
+    name: Build Dependencies
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest] # , macos-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Cache Rust Bindings
+        id: cache-rust-bindings
+        uses: actions/cache@v2
+        with:
+          path: |
+            rust-bindings/target/release/libcsharp_bindings.*
+            rust-bindings/csharp-bindings/bindings/Libsql.g.cs
+          key: ${{ runner.os }}-rust-bindings-${{ hashFiles('./generate-bindings.sh') }}
+          restore-keys: |
+            rust-bindings-
+
+      - name: Generate bindings
+        if: steps.cache-rust-bindings.outputs.cache-hit != 'true'
+        run: ./generate-bindings.sh
+
+      - name: Upload dynamic libraries
+        uses: actions/upload-artifact@v2
+        with:
+          name: bindings
+          path: |
+            rust-bindings/target/release/libcsharp_bindings.*
+            rust-bindings/csharp-bindings/bindings/Libsql.g.cs
+          if-no-files-found: error
