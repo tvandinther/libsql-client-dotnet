@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - master
-      - addritional-runtime-os
+      - additional-runtime-os
     tags:
       - "v[0-9]+.[0-9]+.[0-9]+"
 jobs:
