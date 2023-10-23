@@ -33,15 +33,6 @@ jobs:
         run: ./generate-bindings.sh
         shell: bash
 
-      - run: |
-          find . -name "*.dll"
-          pwd
-          ls -la rust-bindings
-          ls -la rust-bindings/target
-          ls -la rust-bindings/target/release
-        shell: bash
-        continue-on-error: true
-
       - name: Upload bindings
         uses: actions/upload-artifact@v2
         with:
