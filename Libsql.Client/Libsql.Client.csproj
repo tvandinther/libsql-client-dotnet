@@ -42,10 +42,10 @@
             <PackagePath>runtimes/win-x64/native/csharp_bindings.dll</PackagePath>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
-        <!-- <Content Condition="'$(MultiPlatformBuild)' == 'True'" Include="$(NativeOutputPath)libcsharp_bindings.dylib">
+        <Content Condition="'$(MultiPlatformBuild)' == 'True'" Include="$(NativeOutputPath)libcsharp_bindings.dylib">
             <PackagePath>runtimes/osx-x64/native/libcsharp_bindings.dylib</PackagePath>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content> -->
+        </Content>
     </ItemGroup>
 
     <ItemGroup>
