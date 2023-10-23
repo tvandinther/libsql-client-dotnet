@@ -7,9 +7,6 @@ edition = "2021"
 crate-type = ["dylib"]
 path = "../libsql/bindings/c/src/lib.rs"
 
-[build]
-target = "x86_64-unknown-linux-gnu"
-
 [build-dependencies]
 csbindgen = "1.2.0"
 
