@@ -1,6 +1,10 @@
 name: Build Dependencies
 on:
   workflow_call:
+    inputs:
+      multi-platform-build:
+        type: boolean
+        default: true
 
 jobs:
   build-dependencies:
@@ -41,6 +45,7 @@ jobs:
           ls -la rust-bindings
           ls -la rust-bindings/target
           ls -la rust-bindings/target/release
+        shell: bash
 
       - name: Upload dynamic libraries
         uses: actions/upload-artifact@v2
