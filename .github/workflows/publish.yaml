@@ -1,12 +1,18 @@
 name: Publish to Nuget
 on:
   push:
+    branches:
+      - master
+      - addritional-runtime-os
     tags:
       - "v[0-9]+.[0-9]+.[0-9]+"
 jobs:
-  publish:
-    name: Build, Pack & Publish
-    runs-on: ubuntu-latest
+  build-dependencies:
+    name: Build Dependencies
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
       - uses: actions/checkout@v2
 
@@ -35,7 +41,29 @@ jobs:
             rust-bindings-
 
       - name: Generate bindings
+        if: steps.cache-rust-bindings.outputs.cache-hit != 'true'
         run: ./generate-bindings.sh
+
+      - name: Upload dynamic libraries
+        uses: actions/upload-artifact@v2
+        with:
+          name: bindings
+          path: |
+            rust-bindings/target/release/libcsharp_bindings.*
+            rust-bindings/csharp-bindings/bindings/Libsql.g.cs
+          if-no-files-found: error
+
+  publish:
+    name: Build, Pack & Publish
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: build-dependencies
+    steps:
+      - name: Download a single artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: bindings
+          path: rust-bindings
 
       - name: Publish
         id: publish-nuget
