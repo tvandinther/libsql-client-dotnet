@@ -32,18 +32,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Content Include="$(NativeOutputPath)libcsharp_bindings.so">
+        <!-- <Content Include="$(NativeOutputPath)libcsharp_bindings.so">
             <PackagePath>runtimes/linux-x64/native/libcsharp_bindings.so</PackagePath>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
+        </Content> -->
         <Content Include="$(NativeOutputPath)libcsharp_bindings.dll">
             <PackagePath>runtimes/win-x64/native/libcsharp_bindings.dll</PackagePath>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
-        <Content Include="$(NativeOutputPath)libcsharp_bindings.dylib">
+        <!-- <Content Include="$(NativeOutputPath)libcsharp_bindings.dylib">
             <PackagePath>runtimes/osx-x64/native/libcsharp_bindings.dylib</PackagePath>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
+        </Content> -->
     </ItemGroup>
 
     <ItemGroup>

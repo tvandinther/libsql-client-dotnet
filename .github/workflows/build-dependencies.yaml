@@ -8,7 +8,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest] # , macos-latest
+        os: [windows-latest] # ubuntu-latest, , macos-latest
     steps:
       - uses: actions/checkout@v2
 
@@ -24,9 +24,17 @@ jobs:
             rust-bindings-
 
       - name: Generate bindings
-        if: steps.cache-rust-bindings.outputs.cache-hit != 'true'
+        if: |
+          steps.cache-rust-bindings.outputs.cache-hit != 'true'
         run: ./generate-bindings.sh
         shell: bash
+
+      # - name: Generate Bindings (Windows)
+      #   if: >
+      #     steps.cache-rust-bindings.outputs.cache-hit != 'true' &&
+      #     runner.os == "Windows"
+      #   run: ./generate-bindings.ps1
+      #   shell: pwsh
 
       - name: Upload dynamic libraries
         uses: actions/upload-artifact@v2
