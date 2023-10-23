@@ -5,7 +5,7 @@ on:
 jobs:
   build-dependencies:
     name: Build Dependencies
-    runs-on: ${{ if inputs.MultiPlatformBuild }}${{ matrix.os }}{{ else }}ubuntu-latest{{ endif }}
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [windows-latest] # ubuntu-latest, , macos-latest
