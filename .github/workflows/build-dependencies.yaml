@@ -5,7 +5,7 @@ on:
 jobs:
   build-dependencies:
     name: Build Dependencies
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ if inputs.MultiPlatformBuild }}${{ matrix.os }}{{ else }}ubuntu-latest{{ endif }}
     strategy:
       matrix:
         os: [windows-latest] # ubuntu-latest, , macos-latest
@@ -17,8 +17,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            rust-bindings/target/release/libcsharp_bindings.*
-            rust-bindings/csharp-bindings/bindings/Libsql.g.cs
+            rust-bindings
           key: ${{ runner.os }}-rust-bindings-${{ hashFiles('./generate-bindings.sh') }}
           restore-keys: |
             rust-bindings-
@@ -36,7 +35,12 @@ jobs:
       #   run: ./generate-bindings.ps1
       #   shell: pwsh
 
-      - run: ls -la rust-bindings/target/release
+      - run: |
+          find . -name "*.dll"
+          pwd
+          ls -la rust-bindings
+          ls -la rust-bindings/target
+          ls -la rust-bindings/target/release
 
       - name: Upload dynamic libraries
         uses: actions/upload-artifact@v2
