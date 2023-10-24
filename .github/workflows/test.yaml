@@ -14,11 +14,14 @@ jobs:
 
   test:
     name: Test
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     needs: build-dependencies
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Download bindings
         uses: actions/download-artifact@v3
@@ -26,8 +29,8 @@ jobs:
           name: bindings
           path: rust-bindings
 
-      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
-        uses: actions/setup-dotnet@v1.7.2
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: "7.0.x"
 
@@ -35,7 +38,7 @@ jobs:
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --configuration Release --no-restore -p:MultiPlatformBuild=True
+        run: dotnet build --configuration Release --no-restore
 
       - name: Test
         run: dotnet test --no-restore --verbosity normal
