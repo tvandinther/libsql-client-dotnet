@@ -1,6 +1,7 @@
 ﻿bin/
 obj/
 .idea/
+*.DotSettings.user
 
 # Rust files
 target/
