@@ -21,7 +21,7 @@ namespace Libsql.Client.Extensions
                 
                     error.ThrowIfNonZero(exitCode, "Failed to get column name");
                 
-                    var text = Marshal.PtrToStringAuto((IntPtr)ptr);
+                    var text = Marshal.PtrToStringAnsi((IntPtr)ptr);
                     Bindings.libsql_free_string(ptr);
                 
                     if (text is null)

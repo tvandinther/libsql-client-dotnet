@@ -11,7 +11,7 @@ namespace Libsql.Client
         {
             if (exitCode == 0) return;
         
-            var text = Marshal.PtrToStringAuto((IntPtr)Ptr);
+            var text = Marshal.PtrToStringAnsi((IntPtr)Ptr);
         
             throw new LibsqlException($"{message}: {text}");
         }
