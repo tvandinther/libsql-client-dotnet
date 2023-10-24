@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using Libsql.Client.Extensions;
 
 namespace Libsql.Client
 {
@@ -11,7 +12,7 @@ namespace Libsql.Client
         {
             if (exitCode == 0) return;
         
-            var text = Marshal.PtrToStringAnsi((IntPtr)Ptr);
+            var text = CustomMarshal.PtrToStringUTF8((IntPtr)Ptr);
         
             throw new LibsqlException($"{message}: {text}");
         }
