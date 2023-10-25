@@ -25,7 +25,7 @@ namespace Libsql.Client.Extensions
 
             error.ThrowIfNonZero(exitCode, "Failed to get TEXT");
 
-            var text = Marshal.PtrToStringAnsi((IntPtr)ptr);
+            var text = CustomMarshal.PtrToStringUTF8((IntPtr)ptr);
             Bindings.libsql_free_string(ptr);
 
             if (text is null)

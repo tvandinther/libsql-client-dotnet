@@ -40,6 +40,17 @@ public class SelectTests
     }
 
     [Fact]
+    public async Task SelectTextType_Unicode()
+    {
+        var rs = await _db.Execute("SELECT 'Привет, мир!'");
+        var row = rs.Rows.First();
+        var value = row.First();
+        var text = Assert.IsType<Text>(value);
+        
+        Assert.Equal("Привет, мир!", text.Value);
+    }
+
+    [Fact]
     public async Task SelectTextType_WhenNull()
     {
         await _db.Execute("CREATE TABLE IF NOT EXISTS test (id INTEGER, value TEXT)");
