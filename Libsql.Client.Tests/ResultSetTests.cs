@@ -42,4 +42,52 @@ public class ResultSetTests
         Assert.Equal("column_one", columns.First());
         Assert.Equal("column_two", columns.Last());
     }
+
+    [Fact]
+    public async Task LastInsertRowId_ReturnsExpectedValue()
+    {
+        await _db.Execute("CREATE TABLE `test` (`id` INTEGER PRIMARY KEY AUTOINCREMENT)");
+        
+        var rs = await _db.Execute("INSERT INTO `test` DEFAULT VALUES");
+        
+        Assert.Equal(1, rs.LastInsertRowId);
+    }
+
+    [Fact]
+    public async Task LastInsertRowId_ReturnsExpectedValue_WhenMultipleInserts()
+    {
+        await _db.Execute("CREATE TABLE `test` (`id` INTEGER PRIMARY KEY AUTOINCREMENT)");
+        
+        IResultSet rs;
+        for (int i = 0; i < 10; i++)
+        {
+            rs = await _db.Execute("INSERT INTO `test` DEFAULT VALUES");
+            Assert.Equal(i + 1, rs.LastInsertRowId);
+        }
+    }
+
+    [Fact]
+    public async Task Changes_ReturnsExpectedValue()
+    {
+        await _db.Execute("CREATE TABLE `test` (`id` INTEGER PRIMARY KEY AUTOINCREMENT)");
+        
+        var rs = await _db.Execute("INSERT INTO `test` DEFAULT VALUES");
+        
+        Assert.Equal(1, rs.RowsAffected);
+    }
+
+    [Fact]
+    public async Task Changes_ReturnsExectedValue_WhenMultipleUpdates()
+    {
+        await _db.Execute("CREATE TABLE `test` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `value` INTEGER)");
+        
+        for (int i = 0; i < 10; i++)
+        {
+            var rs = await _db.Execute("INSERT INTO `test` DEFAULT VALUES");
+        }
+
+        var rs2 = await _db.Execute("UPDATE `test` SET `value` = 1");
+
+        Assert.Equal(10, rs2.RowsAffected);
+    }
 }
