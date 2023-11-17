@@ -4,5 +4,13 @@ members = [
     "libsql/bindings/c"
 ]
 
+[workspace.dependencies]
+rusqlite = { path = "libsql/vendored/rusqlite", version = "0.29", default-features = false, features = [
+    "libsql-experimental",
+    "column_decltype",
+    "load_extension",
+    "modern_sqlite"
+] }
+
 [patch.crates-io]
 sqlite3-parser = { git = "https://github.com/LucioFranco/lemon-rs" }
