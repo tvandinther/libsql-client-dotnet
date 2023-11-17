@@ -98,5 +98,5 @@ using (var dbClient = DatabaseClient.Create(opts => {
 - [x] A result set is returned from an execution.
   - [x] With the column names.
   - [x] With an enumerable of enumerable (rows) of typed boxed values.
-  - [ ] With the number of affected rows.
-  - [ ] With the last inserted row id.
+  - [x] With the number of affected rows.
+  - [x] With the last inserted row id.
