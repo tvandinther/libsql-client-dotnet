@@ -73,7 +73,7 @@ public class ResultSetTests
         
         var rs = await _db.Execute("INSERT INTO `test` DEFAULT VALUES");
         
-        Assert.Equal(1, rs.RowsAffected);
+        Assert.Equal(1ul, rs.RowsAffected);
     }
 
     [Fact]
@@ -88,6 +88,6 @@ public class ResultSetTests
 
         var rs2 = await _db.Execute("UPDATE `test` SET `value` = 1");
 
-        Assert.Equal(10, rs2.RowsAffected);
+        Assert.Equal(10ul, rs2.RowsAffected);
     }
 }
