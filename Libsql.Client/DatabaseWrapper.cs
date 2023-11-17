@@ -82,8 +82,8 @@ namespace Libsql.Client
                     error.ThrowIfNonZero(exitCode, "Failed to execute query");
             
                     return new ResultSet(
-                        0,
-                        0,
+                        Bindings.libsql_last_insert_rowid(_connection),
+                        Bindings.libsql_changes(_connection),
                         rows.GetColumnNames(),
                         new Rows(rows)
                     );   
