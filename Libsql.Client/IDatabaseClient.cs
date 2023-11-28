@@ -23,5 +23,11 @@ namespace Libsql.Client
         /// <returns>The result set returned by the query.</returns>
         /// <exception cref="LibsqlException">Thrown when the query fails to execute.</exception>
         Task<IResultSet> Execute(string sql, params object[] args);
+
+        /// <summary>
+        /// Synchronises the embedded replica database with the remote database.
+        /// </summary>
+        /// <exception cref="LibsqlException">Thrown when the synchronisation fails.</exception>
+        Task Sync();
     }
 }

@@ -162,6 +162,27 @@ namespace Libsql.Client
             throw new NotImplementedException();
         }
 
+        public async Task Sync()
+        {
+            if (_type != DatabaseType.EmbeddedReplica)
+            {
+                throw new InvalidOperationException("Cannot sync a non-replica database");
+            }
+            
+            await Task.Run(() =>
+            {
+                unsafe
+                {
+                    var error = new Error();
+                    int exitCode;
+            
+                    exitCode = Bindings.libsql_sync(_db, &error.Ptr);
+            
+                    error.ThrowIfNonZero(exitCode, "Failed to sync database");
+                }
+            });
+        }
+
         private void ReleaseUnmanagedResources()
         {
             Bindings.libsql_disconnect(_connection);
