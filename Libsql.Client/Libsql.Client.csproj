@@ -4,7 +4,7 @@
         <Title>Libsql.Client</Title>
         <Authors>Tom van Dinther</Authors>
         <Description>A client library for Libsql.</Description>
-        <PackageVersion>0.3.0</PackageVersion>
+        <PackageVersion>0.4.0</PackageVersion>
         <Copyright>Copyright (c) Tom van Dinther 2023</Copyright>
         <PackageProjectUrl>https://github.com/tvandinther/libsql-client-dotnet</PackageProjectUrl>
         <PackageLicense>https://raw.githubusercontent.com/tvandinther/libsql-client-dotnet/master/LICENSE</PackageLicense>

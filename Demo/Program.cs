@@ -1,6 +1,6 @@
 ﻿using Libsql.Client;
 
-var dbClient = DatabaseClient.Create(opts => {
+var dbClient = await DatabaseClient.Create(opts => {
     opts.Url = ":memory:";
 });
 

@@ -2,7 +2,7 @@ namespace Libsql.Client.Tests;
 
 public class ResultSetTests
 {
-    private readonly IDatabaseClient _db = DatabaseClient.Create();
+    private readonly IDatabaseClient _db = DatabaseClient.Create().Result;
 
     [Fact]
     public async Task Columns_EmptyEnumerable_WhenNonQuery()

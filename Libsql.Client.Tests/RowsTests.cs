@@ -2,7 +2,7 @@
 
 public class RowsTests
 {
-    private readonly IDatabaseClient _db = DatabaseClient.Create();
+    private readonly IDatabaseClient _db = DatabaseClient.Create().Result;
     
     [Fact]
     public async Task Rows_WhenEmpty()
