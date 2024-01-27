@@ -52,7 +52,6 @@ namespace Libsql.Client
         {
             var error = new Error();
             int exitCode;
-
             switch (_type)
             {
                 case DatabaseType.Memory:
@@ -61,7 +60,7 @@ namespace Libsql.Client
                     break;
                 case DatabaseType.Remote:
                 case DatabaseType.EmbeddedReplica:
-                    exitCode = await Task.Run(() => OpenRemoteDatabase(_options, error));
+                    exitCode = await Task.Run(() => OpenRemoteDatabase(_options, ref error));
                     break;
                 default:
                     throw new InvalidOperationException($"Unsupported database type: {_type}");
@@ -84,33 +83,37 @@ namespace Libsql.Client
             }
         }
 
-        private unsafe int OpenRemoteDatabase(DatabaseClientOptions options, Error error)
+        private unsafe int OpenRemoteDatabase(DatabaseClientOptions options, ref Error error)
         {
             var url = options.Url;
             var authToken = options.AuthToken;
             var replicaPath = options.ReplicaPath;
             var useHttps = options.UseHttps;
-            
+
             fixed (libsql_database_t* dbPtr = &_db)
             {
                 fixed (byte* urlPtr = Encoding.UTF8.GetBytes(url))
                 {
+                    if (string.IsNullOrEmpty(authToken)) authToken = "\0";
                     fixed (byte* authTokenPtr = Encoding.UTF8.GetBytes(authToken))
                     {
-                        if (replicaPath is null)
-                        {
-                            return Bindings.libsql_open_remote(urlPtr, authTokenPtr, dbPtr, &error.Ptr);
-                        }
+                        fixed (byte** errorCodePtr = &error.Ptr) {
+                            if (replicaPath is null)
+                            {
+                                var exitCode = Bindings.libsql_open_remote(urlPtr, authTokenPtr, dbPtr, errorCodePtr);
+                                return exitCode;
+                            }
 
-                        fixed (byte* replicaPathPtr = Encoding.UTF8.GetBytes(replicaPath))
-                        {
-                            return Bindings.libsql_open_sync(
-                                replicaPathPtr,
-                                urlPtr,
-                                authTokenPtr,
-                                dbPtr,
-                                &error.Ptr
-                            );
+                            fixed (byte* replicaPathPtr = Encoding.UTF8.GetBytes(replicaPath))
+                            {
+                                return Bindings.libsql_open_sync(
+                                    replicaPathPtr,
+                                    urlPtr,
+                                    authTokenPtr,
+                                    dbPtr,
+                                    errorCodePtr
+                                );
+                            }
                         }
                     }
                 }
