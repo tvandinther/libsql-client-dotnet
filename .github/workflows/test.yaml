@@ -40,5 +40,12 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --no-restore
 
+      - name: Setup Docker on macOS
+        uses: douglascamata/setup-docker-macos-action@v1-alpha
+        if: matrix.os == 'macos-latest'
+
       - name: Test
-        run: dotnet test --no-restore --verbosity normal
+        run: docker compose up -d && dotnet test --no-restore --verbosity normal
+        env:
+          LIBSQL_TEST_URL: http://localhost:8080
+          LIBSQL_TEST_AUTH_TOKEN: ""

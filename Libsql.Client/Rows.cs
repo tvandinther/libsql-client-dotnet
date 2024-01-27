@@ -46,18 +46,28 @@ namespace Libsql.Client
                 var columnCount = Bindings.libsql_column_count(_libsqlRowsT);
                 _enumeratorData.ColumnTypes = new ValueType[columnCount];
             
-                for (var i = 0; i < columnCount; i++)
-                {
-                    int columnType;
-                    var error = new Error();
-                    var errorCode = Bindings.libsql_column_type(_libsqlRowsT, i, &columnType, &error.Ptr);
-                    error.ThrowIfNonZero(errorCode, "Failed to get column type");
-                    _enumeratorData.ColumnTypes[i] = (ValueType)columnType;
-                }
+                PopulateColumnTypes(columnCount);
             }
         
             Debug.Assert(_enumeratorData.ParsedRows != null, "_enumeratorData.ParsedRows is null");
             Debug.Assert(_enumeratorData.ColumnTypes != null, "_enumeratorData.ColumnTypes is null");
+        }
+
+        private unsafe void PopulateColumnTypes(int columnCount) {
+            // Must fetch the cursor before we can read the column types
+            var row = GetRow();
+
+            for (var i = 0; i < columnCount; i++)
+            {
+                int columnType;
+                var error = new Error();
+                var errorCode = Bindings.libsql_column_type(_libsqlRowsT, i, &columnType, &error.Ptr);
+                error.ThrowIfNonZero(errorCode, "Failed to get column type");
+                _enumeratorData.ColumnTypes[i] = (ValueType)columnType;
+            }
+
+            // Parse the first row so that it is cached now that the cursor has moved on to the next row
+            ParseRow(row);
         }
     
         public bool MoveNext()
@@ -72,43 +82,52 @@ namespace Libsql.Client
             }
 
             if (ParsedRowsCount == _currentIndex && _enumeratorData.FullyParsed) return false;
+            
+            var row = GetRow();
+            Current = ParseRow(row);
+            
+            return Current != null;
+        }
 
+        private unsafe libsql_row_t GetRow()
+        {
+            var row = new libsql_row_t();
+            var error = new Error();
+            var exitCode = Bindings.libsql_next_row(_libsqlRowsT, &row, &error.Ptr);
+        
+            error.ThrowIfNonZero(exitCode, "Failed to get next row");
 
-            unsafe
+            return row;
+        }
+
+        private unsafe Value[] ParseRow(libsql_row_t row)
+        {
+            var parsedRow = new Value[_enumeratorData.ColumnTypes.Length];
+        
+            if (row.ptr == null)
             {
-                var row = new libsql_row_t();
-                var error = new Error();
-                var parsedRow = new Value[_enumeratorData.ColumnTypes.Length];
-                var exitCode = Bindings.libsql_next_row(_libsqlRowsT, &row, &error.Ptr);
-            
-                error.ThrowIfNonZero(exitCode, "Failed to get next row");
-            
-                if (row.ptr == null)
-                {
-                    _enumeratorData.FullyParsed = true;
-                    Bindings.libsql_free_rows(_libsqlRowsT);
-                    return false;
-                }
-            
-                for (var i = 0; i < _enumeratorData.ColumnTypes.Length; i++)
-                {
-                    var value = 
-                        _enumeratorData.ColumnTypes[i] == ValueType.Integer ? row.GetInteger(i) :
-                        _enumeratorData.ColumnTypes[i] == ValueType.Real ? row.GetReal(i) :
-                        _enumeratorData.ColumnTypes[i] == ValueType.Text ? row.GetText(i) :
-                        _enumeratorData.ColumnTypes[i] == ValueType.Blob ? row.GetBlob(i) :
-                        _enumeratorData.ColumnTypes[i] == ValueType.Null ? (Value)new Null() :
-                        throw new ArgumentOutOfRangeException();
-                
-                    parsedRow[i] = value;
-                }
-            
-                Bindings.libsql_free_row(row);
-                _enumeratorData.ParsedRows.Add(parsedRow);
-                Current = parsedRow;
-            
-                return true;
+                _enumeratorData.FullyParsed = true;
+                Bindings.libsql_free_rows(_libsqlRowsT);
+                return null;
             }
+        
+            for (var i = 0; i < _enumeratorData.ColumnTypes.Length; i++)
+            {
+                var value = 
+                    _enumeratorData.ColumnTypes[i] == ValueType.Integer ? row.GetInteger(i) :
+                    _enumeratorData.ColumnTypes[i] == ValueType.Real ? row.GetReal(i) :
+                    _enumeratorData.ColumnTypes[i] == ValueType.Text ? row.GetText(i) :
+                    _enumeratorData.ColumnTypes[i] == ValueType.Blob ? row.GetBlob(i) :
+                    _enumeratorData.ColumnTypes[i] == ValueType.Null ? (Value)new Null() :
+                    throw new ArgumentOutOfRangeException();
+            
+                parsedRow[i] = value;
+            }
+        
+            Bindings.libsql_free_row(row);
+            _enumeratorData.ParsedRows.Add(parsedRow);
+
+            return parsedRow;
         }
 
         public void Reset() => _currentIndex = -1;

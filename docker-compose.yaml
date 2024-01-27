@@ -1,16 +1,9 @@
 ﻿version: "3.8"
 services:
-  cargo:
-    image: rust:latest
+  libsql:
+    image: tvandinther/turso:v0.87.7
+    command: ["dev", "--db-file", "/data/chinook.db"]
+    ports:
+      - "8080:8080"
     volumes:
-      - ./rust-bindings:/app
-    working_dir: /app
-    entrypoint: ["cargo"]
-
-  rust-build:
-    image: rust:latest
-    volumes:
-      - ./rust-bindings:/app
-    working_dir: /app
-    entrypoint:
-      ["cargo", "build", "--release", "--target", "x86_64-unknown-linux-gnu"]
+      - ./chinook.db:/data/chinook.db
