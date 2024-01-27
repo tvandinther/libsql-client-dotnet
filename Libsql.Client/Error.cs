@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using Libsql.Client.Extensions;
 
 namespace Libsql.Client
