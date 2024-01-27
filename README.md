@@ -9,13 +9,13 @@ A .NET client library for libsql.
 - Creating a database:
   - In memory.
   - From file.
+  - From connection string.
 - Executing SQL statements:
   - Non-parameterised.
 
 ### Planned Features
 
 - Positional and named arguments.
-- Remote databases.
 - Embedded replicas.
 - Prepared statements.
 - Batched statements.
@@ -84,7 +84,7 @@ using (var dbClient = DatabaseClient.Create(opts => {
 - A database can be created:
   - [x] In memory.
   - [x] From file.
-  - [ ] From connection string.
+  - [x] From connection string.
 - [x] A database can be destroyed/closed/deallocated.
 - [ ] An embedded replica can be created.
   - [ ] An embeded replica can be synced.
