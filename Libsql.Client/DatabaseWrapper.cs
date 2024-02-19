@@ -132,25 +132,6 @@ namespace Libsql.Client
         
             error.ThrowIfNonZero(exitCode, "Failed to connect to database");
         }
-
-        private unsafe IResultSet ExecuteStatement(libsql_stmt_t statement)
-        {
-            var error = new Error();
-            var rows = new libsql_rows_t();
-            int exitCode;
-        
-            exitCode = Bindings.libsql_execute_stmt(_connection, statement, &rows, &error.Ptr);
-            Bindings.libsql_free_stmt(statement);
-
-            error.ThrowIfNonZero(exitCode, "Failed to execute statement");
-        
-            return new ResultSet(
-                Bindings.libsql_last_insert_rowid(_connection),
-                Bindings.libsql_changes(_connection),
-                rows.GetColumnNames(),
-                new Rows(rows)
-            );
-        }
     
         public async Task<IResultSet> Execute(string sql)
         {
@@ -238,6 +219,25 @@ namespace Libsql.Client
                     return ExecuteStatement(statement);
                 }
             });
+        }
+
+        private unsafe IResultSet ExecuteStatement(libsql_stmt_t statement)
+        {
+            var error = new Error();
+            var rows = new libsql_rows_t();
+            int exitCode;
+        
+            exitCode = Bindings.libsql_execute_stmt(_connection, statement, &rows, &error.Ptr);
+            Bindings.libsql_free_stmt(statement);
+
+            error.ThrowIfNonZero(exitCode, "Failed to execute statement");
+        
+            return new ResultSet(
+                Bindings.libsql_last_insert_rowid(_connection),
+                Bindings.libsql_changes(_connection),
+                rows.GetColumnNames(),
+                new Rows(rows)
+            );
         }
 
         public async Task Sync()
