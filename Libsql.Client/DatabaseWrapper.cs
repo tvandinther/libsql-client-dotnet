@@ -132,6 +132,25 @@ namespace Libsql.Client
         
             error.ThrowIfNonZero(exitCode, "Failed to connect to database");
         }
+
+        private unsafe IResultSet ExecuteStatement(libsql_stmt_t statement)
+        {
+            var error = new Error();
+            var rows = new libsql_rows_t();
+            int exitCode;
+        
+            exitCode = Bindings.libsql_execute_stmt(_connection, statement, &rows, &error.Ptr);
+            Bindings.libsql_free_stmt(statement);
+
+            error.ThrowIfNonZero(exitCode, "Failed to execute statement");
+        
+            return new ResultSet(
+                Bindings.libsql_last_insert_rowid(_connection),
+                Bindings.libsql_changes(_connection),
+                rows.GetColumnNames(),
+                new Rows(rows)
+            );
+        }
     
         public async Task<IResultSet> Execute(string sql)
         {
@@ -140,29 +159,85 @@ namespace Libsql.Client
                 unsafe
                 {
                     var error = new Error();
-                    var rows = new libsql_rows_t();
                     int exitCode;
             
                     fixed (byte* sqlPtr = Encoding.UTF8.GetBytes(sql))
                     {
-                        exitCode = Bindings.libsql_execute(_connection, sqlPtr, &rows, &error.Ptr);
+                        var statement = new libsql_stmt_t();
+                        exitCode = Bindings.libsql_prepare(sqlPtr, &statement, &error.Ptr);
+                        error.ThrowIfNonZero(exitCode, $"Failed to prepare statement for query: {sql}");
+                        return ExecuteStatement(statement);
                     }
-            
-                    error.ThrowIfNonZero(exitCode, "Failed to execute query");
-            
-                    return new ResultSet(
-                        Bindings.libsql_last_insert_rowid(_connection),
-                        Bindings.libsql_changes(_connection),
-                        rows.GetColumnNames(),
-                        new Rows(rows)
-                    );   
                 }
             });
         }
 
-        public Task<IResultSet> Execute(string sql, params object[] args)
+        public async Task<IResultSet> Execute(string sql, params object[] args)
         {
-            throw new NotImplementedException();
+            return await Task.Run(() => {
+                unsafe {
+                    var statement = new libsql_stmt_t();
+                    var error = new Error();
+                    int exitCode;
+
+                    fixed (byte* sqlPtr = Encoding.UTF8.GetBytes(sql))
+                    {
+                        exitCode = Bindings.libsql_prepare(sqlPtr, &statement, &error.Ptr);
+                    }
+
+                    error.ThrowIfNonZero(exitCode, $"Failed to prepare statement for query: {sql}");
+
+                    if (args is null)
+                    {
+                        exitCode = Bindings.libsql_bind_null(statement, 1, &error.Ptr);
+                        error.ThrowIfNonZero(exitCode, "Failed to bind null parameter");
+                    }
+                    else {
+                        for (var i = 0; i < args.Length; i++)
+                        {
+                            var arg = args[i];
+
+                            if (arg is null)
+                            {
+                                exitCode = Bindings.libsql_bind_null(statement, i + 1, &error.Ptr);
+                                error.ThrowIfNonZero(exitCode, "Failed to bind null parameter");
+                                continue;
+                            }
+
+                            switch (arg)
+                            {
+                                case int val:
+                                    exitCode = Bindings.libsql_bind_int(statement, i + 1, val, &error.Ptr);
+                                    break;
+                                case double d:
+                                    exitCode = Bindings.libsql_bind_float(statement, i + 1, d, &error.Ptr);
+                                    break;
+                                case string s:
+                                    fixed (byte* sPtr = Encoding.UTF8.GetBytes(s))
+                                    {
+                                        exitCode = Bindings.libsql_bind_string(statement, i + 1, sPtr, &error.Ptr);
+                                    }
+                                    break;
+                                case byte[] b:
+                                    fixed (byte* bPtr = b)
+                                    {
+                                        exitCode = Bindings.libsql_bind_blob(statement, i + 1, bPtr, b.Length, &error.Ptr);
+                                    }
+                                    break;
+                                case null:
+                                    exitCode = Bindings.libsql_bind_null(statement, i + 1, &error.Ptr);
+                                    break;
+                                default:
+                                    throw new ArgumentException($"Unsupported argument type: {arg.GetType()}");
+                            }
+                            
+                            error.ThrowIfNonZero(exitCode, $"Failed to bind parameter. Type: {arg.GetType()} Value: {arg}");
+                        }
+                    }
+                    
+                    return ExecuteStatement(statement);
+                }
+            });
         }
 
         public async Task Sync()
