@@ -1,3 +1,4 @@
+using System.Net;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
 
@@ -17,7 +18,11 @@ public class DatabaseContainer : IDisposable
             .WithCommand("dev", "--db-file", "/data/chinook.db")
             .WithResourceMapping("chinook.db", "/data")
             .WithPortBinding(8080, true)
-            .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(8080))
+            .WithWaitStrategy(Wait.ForUnixContainer().UntilHttpRequestIsSucceeded(request => request
+                .ForPort(8080)
+                .ForPath("/health")
+                .ForStatusCode(HttpStatusCode.OK)
+            ))
             .Build();
     }
 
