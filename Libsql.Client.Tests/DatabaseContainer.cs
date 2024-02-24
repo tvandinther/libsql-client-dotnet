@@ -12,6 +12,7 @@ public class DatabaseContainer : IDisposable
             .WithCommand("dev", "--db-file", "/data/chinook.db")
             .WithResourceMapping("chinook.db", "/data")
             .WithPortBinding(8080, true)
+            .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(8080))
             .Build();
     }
 
