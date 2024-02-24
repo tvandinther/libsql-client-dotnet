@@ -6,9 +6,11 @@ namespace Libsql.Client
     internal class Statement
     {
         public libsql_stmt_t Stmt;
+        private libsql_connection_t _connection;
 
-        public unsafe Statement(string sql)
+        public unsafe Statement(libsql_connection_t connection, string sql)
         {
+            _connection = connection;
             Stmt = new libsql_stmt_t();
             var error = new Error();
             int exitCode;
@@ -17,7 +19,7 @@ namespace Libsql.Client
             {
                 fixed (libsql_stmt_t* statementPtr = &Stmt)
                 {
-                    exitCode = Bindings.libsql_prepare(sqlPtr, statementPtr, &error.Ptr);
+                    exitCode = Bindings.libsql_prepare(_connection, sqlPtr, statementPtr, &error.Ptr);
                 }
             }
 

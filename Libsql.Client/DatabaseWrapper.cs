@@ -137,7 +137,7 @@ namespace Libsql.Client
         {
             return await Task.Run(() =>
             {
-                var statement = new Statement(sql);
+                var statement = new Statement(_connection, sql);
                 return ExecuteStatement(statement);
             });
         }
@@ -145,7 +145,7 @@ namespace Libsql.Client
         public async Task<IResultSet> Execute(string sql, params object[] args)
         {
             return await Task.Run(() => {
-                var statement = new Statement(sql);
+                var statement = new Statement(_connection, sql);
                 statement.Bind(args);
                 
                 return ExecuteStatement(statement);
@@ -158,7 +158,7 @@ namespace Libsql.Client
             var rows = new libsql_rows_t();
             int exitCode;
         
-            exitCode = Bindings.libsql_execute_stmt(_connection, statement.Stmt, &rows, &error.Ptr);
+            exitCode = Bindings.libsql_execute_stmt(statement.Stmt, &rows, &error.Ptr);
             statement.Dispose();
 
             error.ThrowIfNonZero(exitCode, "Failed to execute statement");
