@@ -40,9 +40,5 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --no-restore
 
-      - name: Setup Docker on macOS
-        uses: douglascamata/setup-docker-macos-action@v1-alpha
-        if: matrix.os == 'macos-13'
-
       - name: Test
         run: dotnet test --no-restore --verbosity normal
