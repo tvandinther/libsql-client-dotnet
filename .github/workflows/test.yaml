@@ -18,7 +18,7 @@ jobs:
     needs: build-dependencies
     strategy:
       matrix:
-        os: [ubuntu-22.04, macos-13]
+        os: [ubuntu-latest, macos-13]
 
     steps:
       - uses: actions/checkout@v3
