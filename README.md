@@ -80,6 +80,12 @@ using (var dbClient = DatabaseClient.Create(opts => {
 }
 ```
 
+## Disclaimer
+
+This project is still in early development and not ready for production use. The API is subject to include breaking changes on minor versions until version 1.0.
+
+The full test suite is run only on a Linux x64 platform. Most of the test suite is run on Linux, Windows, and macOS x64 platforms. The test suite runs on .NET 7.
+
 ## Progress
 - A database can be created:
   - [x] In memory.
