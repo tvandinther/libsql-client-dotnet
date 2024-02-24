@@ -18,7 +18,7 @@ jobs:
     needs: build-dependencies
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-22.04, macos-13]
 
     steps:
       - uses: actions/checkout@v3
@@ -42,7 +42,7 @@ jobs:
 
       - name: Setup Docker on macOS
         uses: douglascamata/setup-docker-macos-action@v1-alpha
-        if: matrix.os == 'macos-latest'
+        if: matrix.os == 'macos-13'
 
       - name: Test
         run: dotnet test --no-restore --verbosity normal
