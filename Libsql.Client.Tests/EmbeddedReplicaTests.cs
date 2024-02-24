@@ -1,3 +1,5 @@
+using DotNet.Testcontainers.Containers;
+
 namespace Libsql.Client.Tests;
 
 public class EmbeddedReplicaTests : IClassFixture<DatabaseContainer>
@@ -6,9 +8,9 @@ public class EmbeddedReplicaTests : IClassFixture<DatabaseContainer>
 
     public EmbeddedReplicaTests(DatabaseContainer fixture)
     {
-        Skip.IfNot(OperatingSystem.IsLinux(), "Embedded replica tests run only on Linux.");
+        Skip.If(fixture.Container is null, "Remote tests run only on Linux.");
+        IContainer databaseContainer = fixture.Container!;
 
-        var databaseContainer = fixture.Container;
         databaseContainer.StartAsync().Wait();
         DatabaseClient = Libsql.Client.DatabaseClient.Create(opts => {
             opts.Url = $"http://{databaseContainer.Hostname}:{databaseContainer.GetMappedPublicPort(8080)}";

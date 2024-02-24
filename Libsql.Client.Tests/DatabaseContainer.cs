@@ -7,6 +7,11 @@ public class DatabaseContainer : IDisposable
 {
     public DatabaseContainer()
     {
+        if (!OperatingSystem.IsLinux())
+        {
+            return;
+        }
+
         Container = new ContainerBuilder()
             .WithImage("tvandinther/turso:v0.87.7")
             .WithCommand("dev", "--db-file", "/data/chinook.db")
@@ -16,11 +21,12 @@ public class DatabaseContainer : IDisposable
             .Build();
     }
 
-    public IContainer Container { get; }
+    public IContainer? Container { get; }
 
     public async void Dispose()
     {
-        await Container.DisposeAsync();
+        if (Container is not null)
+            await Container.DisposeAsync();
     }
 
 }

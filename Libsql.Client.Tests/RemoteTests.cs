@@ -1,3 +1,5 @@
+using DotNet.Testcontainers.Containers;
+
 namespace Libsql.Client.Tests;
 
 public class RemoteTests : IClassFixture<DatabaseContainer>
@@ -6,9 +8,9 @@ public class RemoteTests : IClassFixture<DatabaseContainer>
 
     public RemoteTests(DatabaseContainer fixture)
     {
-        Skip.IfNot(OperatingSystem.IsLinux(), "Remote tests run only on Linux.");
+        Skip.If(fixture.Container is null, "Remote tests run only on Linux.");
+        IContainer databaseContainer = fixture.Container!;
 
-        var databaseContainer = fixture.Container;
         databaseContainer.StartAsync().Wait();
         DatabaseClient = Libsql.Client.DatabaseClient.Create(opts => {
             opts.Url = $"http://{databaseContainer.Hostname}:{databaseContainer.GetMappedPublicPort(8080)}";
