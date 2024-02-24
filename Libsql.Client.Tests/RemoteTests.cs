@@ -1,5 +1,3 @@
-using System.Runtime.InteropServices;
-
 namespace Libsql.Client.Tests;
 
 public class RemoteTests : IClassFixture<DatabaseContainer>
@@ -8,7 +6,7 @@ public class RemoteTests : IClassFixture<DatabaseContainer>
 
     public RemoteTests(DatabaseContainer fixture)
     {
-        Skip.IfNot(RuntimeInformation.IsOSPlatform(OSPlatform.Linux), "Remote tests run only on Linux.");
+        Skip.IfNot(OperatingSystem.IsLinux(), "Remote tests run only on Linux.");
 
         var databaseContainer = fixture.Container;
         databaseContainer.StartAsync().Wait();

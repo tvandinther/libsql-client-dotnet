@@ -1,5 +1,3 @@
-using System.Runtime.InteropServices;
-
 namespace Libsql.Client.Tests;
 
 public class EmbeddedReplicaTests : IClassFixture<DatabaseContainer>
@@ -8,7 +6,7 @@ public class EmbeddedReplicaTests : IClassFixture<DatabaseContainer>
 
     public EmbeddedReplicaTests(DatabaseContainer fixture)
     {
-        Skip.IfNot(RuntimeInformation.IsOSPlatform(OSPlatform.Linux), "Embedded replica tests run only on Linux.");
+        Skip.IfNot(OperatingSystem.IsLinux(), "Embedded replica tests run only on Linux.");
 
         var databaseContainer = fixture.Container;
         databaseContainer.StartAsync().Wait();
@@ -33,6 +31,7 @@ public class EmbeddedReplicaTests : IClassFixture<DatabaseContainer>
     }
 
     [Fact(Skip = "Not implemented")]
+    // [SkippableFact]
     public async Task CanCallSync()
     {
         await DatabaseClient.Sync();
