@@ -45,7 +45,4 @@ jobs:
         if: matrix.os == 'macos-latest'
 
       - name: Test
-        run: docker compose up -d && dotnet test --no-restore --verbosity normal
-        env:
-          LIBSQL_TEST_URL: http://localhost:8080
-          LIBSQL_TEST_AUTH_TOKEN: ""
+        run: dotnet test --no-restore --verbosity normal
