@@ -1,19 +1,31 @@
+using DotNet.Testcontainers.Containers;
+
 namespace Libsql.Client.Tests;
 
-public class EmbeddedReplicaTests
+public class EmbeddedReplicaTests : IClassFixture<DatabaseContainer>
 {
+    public IDatabaseClient DatabaseClient { get; }
+
+    public EmbeddedReplicaTests(DatabaseContainer fixture)
+    {
+        Skip.If(fixture.Container is null, "Remote tests run only on Linux.");
+        IContainer databaseContainer = fixture.Container!;
+
+        databaseContainer.StartAsync().Wait();
+        DatabaseClient = Libsql.Client.DatabaseClient.Create(opts => {
+            opts.Url = $"http://{databaseContainer.Hostname}:{databaseContainer.GetMappedPublicPort(8080)}";
+            opts.AuthToken = "";
+            opts.ReplicaPath = "replica.db";
+        }).Result;
+    }
+
     [Fact(Skip = "Not implemented")]
+    // [SkippableFact]
     public async Task CanConnectAndQueryReplicaDatabase()
     {
-        var db = await DatabaseClient.Create(opts => {
-            opts.Url = Environment.GetEnvironmentVariable("LIBSQL_TEST_URL") ?? throw new InvalidOperationException("LIBSQL_TEST_URL is not set");
-            opts.AuthToken = Environment.GetEnvironmentVariable("LIBSQL_TEST_AUTH_TOKEN");
-            opts.ReplicaPath = "/home/tvandinther/code/libsql-client-dotnet/replica.db";
-        });
+        await DatabaseClient.Sync();
 
-        await db.Sync();
-
-        var rs = await db.Execute("SELECT COUNT(*) FROM albums");
+        var rs = await DatabaseClient.Execute("SELECT COUNT(*) FROM albums");
 
         var count = rs.Rows.First().First();
         var value = Assert.IsType<Integer>(count);
@@ -21,14 +33,9 @@ public class EmbeddedReplicaTests
     }
 
     [Fact(Skip = "Not implemented")]
+    // [SkippableFact]
     public async Task CanCallSync()
     {
-        var db = await DatabaseClient.Create(opts => {
-            opts.Url = Environment.GetEnvironmentVariable("LIBSQL_TEST_URL") ?? throw new InvalidOperationException("LIBSQL_TEST_URL is not set");
-            opts.AuthToken = Environment.GetEnvironmentVariable("LIBSQL_TEST_AUTH_TOKEN");
-            opts.ReplicaPath = "/home/tvandinther/code/libsql-client-dotnet/replica.db";
-        });
-
-        await db.Sync();
+        await DatabaseClient.Sync();
     }
 }

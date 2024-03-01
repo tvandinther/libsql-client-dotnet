@@ -18,7 +18,7 @@ jobs:
     needs: build-dependencies
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-22.04, windows-2022, macos-13]
 
     steps:
       - uses: actions/checkout@v3
@@ -40,12 +40,5 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --no-restore
 
-      - name: Setup Docker on macOS
-        uses: douglascamata/setup-docker-macos-action@v1-alpha
-        if: matrix.os == 'macos-latest'
-
       - name: Test
-        run: docker compose up -d && dotnet test --no-restore --verbosity normal
-        env:
-          LIBSQL_TEST_URL: http://localhost:8080
-          LIBSQL_TEST_AUTH_TOKEN: ""
+        run: dotnet test --no-restore --verbosity normal
