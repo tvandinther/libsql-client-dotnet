@@ -1,4 +1,4 @@
-﻿![example workflow](https://github.com/tvandinther/libsql-client-dotnet/actions/workflows/test.yaml/badge.svg)
+﻿![tests](https://github.com/tvandinther/libsql-client-dotnet/actions/workflows/test.yaml/badge.svg)
 
 # Libsql.Client
 
