@@ -1,4 +1,6 @@
-﻿# Libsql.Client
+﻿![tests](https://github.com/tvandinther/libsql-client-dotnet/actions/workflows/test.yaml/badge.svg)
+
+# Libsql.Client
 
 A .NET client library for libsql.
 
