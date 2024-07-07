@@ -61,10 +61,7 @@ namespace Libsql.Client
             {
                 int columnType;
                 var error = new Error();
-                Console.WriteLine("HERE");
-                Console.WriteLine(((int) &row).ToString("x"));
                 var errorCode = Bindings.libsql_column_type(_libsqlRowsT, row, i, &columnType, &error.Ptr);
-                Console.WriteLine("HERE2");
                 error.ThrowIfNonZero(errorCode, "Failed to get column type");
                 _enumeratorData.ColumnTypes[i] = (ValueType)columnType;
             }

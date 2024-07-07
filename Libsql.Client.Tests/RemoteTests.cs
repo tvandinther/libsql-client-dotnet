@@ -26,7 +26,6 @@ public class RemoteTests : IClassFixture<DatabaseContainer>
         
         var count = rs.Rows.First().First();
         var value = Assert.IsType<Integer>(count);
-        Console.WriteLine(value.Value);
         Assert.Equal(3503, value.Value);
     }
 }
