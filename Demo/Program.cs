@@ -1,24 +1,30 @@
 ﻿using Libsql.Client;
 
+// Create a database client using the static factory method
 var dbClient = await DatabaseClient.Create(opts => {
     opts.Url = ":memory:";
 });
 
+
+// Execute SQL statements directly
 var rs = await dbClient.Execute("CREATE TABLE IF NOT EXISTS `users` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `height` REAL, `data` BLOB)");
 
+
+// Read the results by using the IResultSet interface
 var rs1 = await dbClient.Execute("INSERT INTO `users` (`name`, `height`, `data`) VALUES ('John Doe', 182.6, X'a4c7b8e21d3f50a6b9d2e8f7c1349a0b5c6d7e218349b6d012c71e8f9a093fed'), ('Jane Doe', 0.5, X'00')");
 Console.WriteLine($"Inserted {rs1.RowsAffected} rows");
 Console.WriteLine($"Last inserted id: {rs1.LastInsertRowId}");
 var rs2 = await dbClient.Execute("SELECT `id`, `name`, `height`, `data` FROM `users`");
+PrintTable(rs2);
 
-Console.WriteLine();
-Console.WriteLine(string.Join(", ", rs2.Columns));
-Console.WriteLine("------------------------");
-Console.WriteLine(string.Join("\n", rs2.Rows.Select(row => string.Join(", ", row.Select(x => x.ToString())))));
-Console.WriteLine(string.Join("\n", rs2.Rows.Select(row => string.Join(", ", row.Select(x => x.ToString())))));
 
-var user = ToUser(rs2.Rows.First());
+// Using positional arguments
+var searchString = "hn";
+var rs3 = await dbClient.Execute("SELECT `id`, `name`, `height`, `data` FROM `users` WHERE `name` LIKE concat('%', ?, '%')", searchString);
+PrintTable(rs3);
 
+
+// Map rows to User records using type declaration pattern matching
 var users = rs2.Rows.Select(ToUser);
 
 User ToUser(IEnumerable<Value> row)
@@ -35,6 +41,14 @@ User ToUser(IEnumerable<Value> row)
     }
 
     throw new ArgumentException();
+}
+
+void PrintTable(IResultSet rs)
+{
+    Console.WriteLine();
+    Console.WriteLine(string.Join(", ", rs.Columns));
+    Console.WriteLine("------------------------");
+    Console.WriteLine(string.Join("\n", rs.Rows.Select(row => string.Join(", ", row.Select(x => x.ToString())))));
 }
 
 record User(int Id, string Name, double? Height, byte[] Data);
