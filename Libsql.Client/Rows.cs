@@ -55,19 +55,23 @@ namespace Libsql.Client
 
         private unsafe void PopulateColumnTypes(int columnCount) {
             // Must fetch the cursor before we can read the column types
-            var row = GetRow();
+            var firstRow = GetRow();
+
+            // Do not populate column types if there is no first row
+            if ((int) firstRow.ptr == 0) return;
 
             for (var i = 0; i < columnCount; i++)
             {
                 int columnType;
                 var error = new Error();
-                var errorCode = Bindings.libsql_column_type(_libsqlRowsT, i, &columnType, &error.Ptr);
+                Debug.Assert(firstRow.ptr != null, "firstRow is null. Can not find column type on a null pointer.");
+                var errorCode = Bindings.libsql_column_type(_libsqlRowsT, firstRow, i, &columnType, &error.Ptr);
                 error.ThrowIfNonZero(errorCode, "Failed to get column type");
                 _enumeratorData.ColumnTypes[i] = (ValueType)columnType;
             }
 
             // Parse the first row so that it is cached now that the cursor has moved on to the next row
-            ParseRow(row);
+            ParseRow(firstRow);
         }
     
         public bool MoveNext()

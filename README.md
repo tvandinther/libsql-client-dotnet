@@ -38,14 +38,20 @@ var dbClient = DatabaseClient.Create(opts => {
 
 ### Executing SQL Statements
 
+Using direct queries
 ```csharp
 await dbClient.Execute("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT, height REAL)");
+```
+
+Using positional arguments
+```csharp
+await dbClient.Execute("SELECT name FROM users WHERE id = ?", userId);
 ```
 
 ### Querying the Database
 
 ```csharp
-User ToUser(Value[] row)
+User ToUser(IEnumerable<Value> row)
 {
     var rowArray = row.ToArray();
 
@@ -98,7 +104,7 @@ The full test suite is run only on a Linux x64 platform. Most of the test suite 
   - [ ] An embeded replica can be synced.
 - The database can execute SQL statements:
   - [x] Non-parameterised.
-  - [ ] Parameterised with positional arguments.
+  - [x] Parameterised with positional arguments.
   - [ ] Parameterised with named arguments.
 - [ ] Prepared statements.
 - [ ] Batched statements.

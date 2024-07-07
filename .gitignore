@@ -1,9 +1,13 @@
 ﻿bin/
 obj/
 .idea/
+.mono/
 *.DotSettings.user
 
 # Rust files
 target/
 bindings/
 Cargo.lock
+
+*.db-shm
+*.db-wal

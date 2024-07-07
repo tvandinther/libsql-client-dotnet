@@ -137,32 +137,38 @@ namespace Libsql.Client
         {
             return await Task.Run(() =>
             {
-                unsafe
-                {
-                    var error = new Error();
-                    var rows = new libsql_rows_t();
-                    int exitCode;
-            
-                    fixed (byte* sqlPtr = Encoding.UTF8.GetBytes(sql))
-                    {
-                        exitCode = Bindings.libsql_execute(_connection, sqlPtr, &rows, &error.Ptr);
-                    }
-            
-                    error.ThrowIfNonZero(exitCode, "Failed to execute query");
-            
-                    return new ResultSet(
-                        Bindings.libsql_last_insert_rowid(_connection),
-                        Bindings.libsql_changes(_connection),
-                        rows.GetColumnNames(),
-                        new Rows(rows)
-                    );   
-                }
+                var statement = new Statement(_connection, sql);
+                return ExecuteStatement(statement);
             });
         }
 
-        public Task<IResultSet> Execute(string sql, params object[] args)
+        public async Task<IResultSet> Execute(string sql, params object[] args)
         {
-            throw new NotImplementedException();
+            return await Task.Run(() => {
+                var statement = new Statement(_connection, sql);
+                statement.Bind(args);
+                
+                return ExecuteStatement(statement);
+            });
+        }
+
+        private unsafe IResultSet ExecuteStatement(Statement statement)
+        {
+            var error = new Error();
+            var rows = new libsql_rows_t();
+            int exitCode;
+        
+            exitCode = Bindings.libsql_execute_stmt(statement.Stmt, &rows, &error.Ptr);
+            statement.Dispose();
+
+            error.ThrowIfNonZero(exitCode, "Failed to execute statement");
+        
+            return new ResultSet(
+                Bindings.libsql_last_insert_rowid(_connection),
+                Bindings.libsql_changes(_connection),
+                rows.GetColumnNames(),
+                new Rows(rows)
+            );
         }
 
         public async Task Sync()
