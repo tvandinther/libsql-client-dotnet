@@ -45,4 +45,18 @@ public class StatementTests
 
         Assert.Equal<double>(0.5, integer);
     }
+
+    [Fact]
+    public async Task Statement_CanBind_Text()
+    {
+        var statement = await _db.Prepare("SELECT ?");
+
+        statement.Bind("hello");
+        var rs = await statement.Query();
+        var row = rs.Rows.First();
+        var value = row.First();
+        var text = Assert.IsType<Text>(value);
+
+        Assert.Equal("hello", text);
+    }
 }
