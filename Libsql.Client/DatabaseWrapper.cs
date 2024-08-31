@@ -140,45 +140,70 @@ namespace Libsql.Client
             error.ThrowIfNonZero(exitCode, "Failed to connect to database");
         }
 
-        public async Task<IResultSet> Query(string sql)
+        public Task<IResultSet> Query(string sql)
         {
-            return await Task.Run(() =>
+            return Task.Run(() =>
             {
-                var statement = new Statement(_connection, sql);
+                var statement = new StatementWrapper(this, _connection, sql);
                 return QueryStatement(statement);
             });
         }
 
-        public async Task<IResultSet> Query(string sql, params object[] args)
+        public Task<IResultSet> Query(string sql, params object[] args)
         {
-            return await Task.Run(() => {
-                var statement = new Statement(_connection, sql);
-                statement.Bind(args);
+            return Task.Run(() => {
+                var statement = new StatementWrapper(this, _connection, sql);
+                statement.BindAll(args);
                 
                 return QueryStatement(statement);
             });
         }
     
-        public async Task<ulong> Execute(string sql)
+        public Task<ulong> Execute(string sql)
         {
-            return await Task.Run(() =>
+            return Task.Run(() =>
             {
-                var statement = new Statement(_connection, sql);
+                var statement = new StatementWrapper(this, _connection, sql);
                 return ExecuteStatement(statement);
             });
         }
 
-        public async Task<ulong> Execute(string sql, params object[] args)
+        public Task<ulong> Execute(string sql, params object[] args)
         {
-            return await Task.Run(() => {
-                var statement = new Statement(_connection, sql);
-                statement.Bind(args);
+            return Task.Run(() => {
+                var statement = new StatementWrapper(this, _connection, sql);
+                statement.BindAll(args);
                 
                 return ExecuteStatement(statement);
             });
         }
+        
+        public Task<IResultSet> Query(IStatement statement)
+        {
+            return statement.Query();
+        }
 
-        private unsafe IResultSet QueryStatement(Statement statement)
+        public Task<ulong> Execute(IStatement statement)
+        {
+            return statement.Execute();
+        }
+
+        internal Task<IResultSet> Query(StatementWrapper statement)
+        {
+            return Task.Run(() => {
+                return QueryStatement(statement);
+            });
+        }
+
+        internal Task<ulong> Execute(StatementWrapper statement)
+        {
+            return Task.Run(() => {
+                return ExecuteStatement(statement);
+            });
+        }
+
+
+        private unsafe IResultSet QueryStatement(StatementWrapper statement)
         {
             var error = new Error();
             var rows = new libsql_rows_t();
@@ -197,7 +222,7 @@ namespace Libsql.Client
             );
         }
 
-        private unsafe ulong ExecuteStatement(Statement statement)
+        private unsafe ulong ExecuteStatement(StatementWrapper statement)
         {
             var error = new Error();
             int exitCode;
@@ -210,14 +235,14 @@ namespace Libsql.Client
             return Bindings.libsql_changes(_connection);
         }
 
-        public async Task Sync()
+        public Task Sync()
         {
             if (_type != DatabaseType.EmbeddedReplica)
             {
                 throw new InvalidOperationException("Cannot sync a non-replica database");
             }
             
-            await Task.Run(() =>
+            return Task.Run(() =>
             {
                 unsafe
                 {
@@ -229,6 +254,11 @@ namespace Libsql.Client
                     error.ThrowIfNonZero(exitCode, "Failed to sync database");
                 }
             });
+        }
+
+        public Task<IStatement> Prepare(string sql)
+        {
+            return Task.Run<IStatement>(() =>  new StatementWrapper(this, _connection, sql));
         }
 
         private void ReleaseUnmanagedResources()
