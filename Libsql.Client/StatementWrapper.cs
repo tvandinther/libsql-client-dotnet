@@ -161,9 +161,6 @@ namespace Libsql.Client
 
         private void ReleaseUnmanagedResources()
         {
-            unsafe {
-                Console.WriteLine($"Freeing {(int) Stmt.ptr}");
-            }
             Bindings.libsql_free_stmt(Stmt);
         }
 
