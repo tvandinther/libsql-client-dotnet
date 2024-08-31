@@ -107,6 +107,7 @@ statement.Bind("libsql");
 var numberOfBoundValues = statement.BoundValuesCount;
 Console.WriteLine(numberOfBoundValues) // 2
 ```
+> Prepared statements are held resources. `IStatement` implements the `IDisposable` interface. Make sure you manage its lifetime correctly.
 
 ### Closing the Database
 
