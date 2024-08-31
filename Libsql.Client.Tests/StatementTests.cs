@@ -4,21 +4,6 @@ public class StatementTests
 {
     private readonly IDatabaseClient _db = DatabaseClient.Create().Result;
 
-    public StatementTests()
-    {
-        _db.Execute("CREATE TABLE `test` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT)");
-        _db.Execute("INSERT INTO `test` VALUES ('a', 'b', 'c')");
-    }
-
-    [Fact]
-    public async Task Prepare_ReturnedStatement_CanBeExecuted()
-    {
-        using var statement = await _db.Prepare("SELECT `id` FROM `test` WHERE `name` = ?");
-
-        Assert.NotNull(statement);
-        Assert.IsAssignableFrom<IStatement>(statement);
-    }
-
     [Fact]
     public async Task Statement_CanBind_Integer()
     {
@@ -103,5 +88,43 @@ public class StatementTests
         var numberOfBoundValues = statement.BoundValuesCount;
 
         Assert.Equal(3, numberOfBoundValues);
+    }
+
+    [Fact]
+    public async Task Database_CanQuery_Statements()
+    {
+        using var statement = await _db.Prepare("SELECT ?");
+        var expected = 1;
+
+        statement.Bind(new Integer(expected));
+        var rs = await _db.Query(statement);
+        var row = rs.Rows.First();
+        var value = row.First();
+        var integer = Assert.IsType<Integer>(value);
+
+        Assert.Equal<int>(expected, integer);
+    }
+
+    [Fact]
+    public async Task Statement_CanExecute()
+    {
+        await _db.Execute("CREATE TABLE `test` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT)");
+        using var statement = await _db.Prepare("INSERT INTO `test` (`name`) VALUES ('a'), ('b'), ('c')");
+
+        var rowsAffected = await statement.Execute();
+
+        Assert.Equal(3ul, rowsAffected);
+    }
+    
+
+    [Fact]
+    public async Task Database_CanExecute_Statements()
+    {
+        await _db.Execute("CREATE TABLE `test` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT)");
+        using var statement = await _db.Prepare("INSERT INTO `test` (`name`) VALUES ('a'), ('b'), ('c')");
+
+        var rowsAffected = await _db.Execute(statement);
+
+        Assert.Equal(3ul, rowsAffected);
     }
 }

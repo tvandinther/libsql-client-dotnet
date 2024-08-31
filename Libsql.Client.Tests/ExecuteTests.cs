@@ -39,7 +39,7 @@ public class ExecuteTests
     [Fact]
     public async Task RowsAffected_ReturnsExectedValue_WhenMultipleUpdates()
     {
-        await _db.Query("CREATE TABLE `test` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `value` INTEGER)");
+        await _db.Execute("CREATE TABLE `test` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `value` INTEGER)");
         
         for (int i = 0; i < 10; i++)
         {
@@ -49,5 +49,16 @@ public class ExecuteTests
         var rs2 = await _db.Query("UPDATE `test` SET `value` = 1");
 
         Assert.Equal(10ul, rs2.RowsAffected);
+    }
+
+    [Fact]
+    public async Task Throws_WhenRowsReturned()
+    {
+        async Task action()
+        {
+            await _db.Execute("SELECT 1");
+        }
+
+        await Assert.ThrowsAsync<LibsqlException>(action);
     }
 }
