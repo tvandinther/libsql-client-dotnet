@@ -106,10 +106,14 @@ namespace Libsql.Client
 
                             fixed (byte* replicaPathPtr = Encoding.UTF8.GetBytes(replicaPath))
                             {
+                                var readYourWrites = true;
+                                byte* localEncryptionKeyPtr = null;
                                 return Bindings.libsql_open_sync(
                                     replicaPathPtr,
                                     urlPtr,
                                     authTokenPtr,
+                                    *(byte*)&readYourWrites,
+                                    localEncryptionKeyPtr,
                                     dbPtr,
                                     errorCodePtr
                                 );
@@ -152,13 +156,14 @@ namespace Libsql.Client
             });
         }
 
+        // TODO: Differentiate query statements and execute statements.
         private unsafe IResultSet ExecuteStatement(Statement statement)
         {
             var error = new Error();
             var rows = new libsql_rows_t();
             int exitCode;
         
-            exitCode = Bindings.libsql_execute_stmt(statement.Stmt, &rows, &error.Ptr);
+            exitCode = Bindings.libsql_query_stmt(statement.Stmt, &rows, &error.Ptr);
             statement.Dispose();
 
             error.ThrowIfNonZero(exitCode, "Failed to execute statement");

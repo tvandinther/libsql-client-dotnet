@@ -6,12 +6,14 @@ edition = "2021"
 [lib]
 crate-type = ["dylib"]
 path = "../libsql/bindings/c/src/lib.rs"
+doc = false
 
 [build-dependencies]
 csbindgen = "1.2.0"
 
 [dependencies]
-sql-experimental = { path = "../libsql/bindings/c" }
+bytes = "1.5.0"
 libsql = { path = "../libsql/libsql" }
 lazy_static = "1.4.0"
 tokio = { version = "1.29.1", features = [ "rt-multi-thread" ] }
+hyper-rustls = { version = "0.25", features = ["webpki-roots"]}

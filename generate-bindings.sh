@@ -3,7 +3,7 @@ set -euo pipefail
 
 script_dir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
-export LIBSQL_VERSION="0.2.2"
+export LIBSQL_RS_VERSION="0.5.0"
 bindings_dir="${script_dir}/rust-bindings"
 force=false
 
@@ -41,11 +41,11 @@ fi
 # git sparse-checkout init
 # git sparse-checkout set bindings/c bindings/wasm libsql libsql-sys
 # -----
-git fetch --quiet origin
-git checkout bdb526e
+# git fetch --quiet origin
+# git checkout fb85262
 # -----
-# git fetch --depth 1 origin tag v${LIBSQL_VERSION}
-# git reset --hard tags/v${LIBSQL_VERSION}
+git fetch --depth 1 origin tag libsql-rs-v${LIBSQL_RS_VERSION}
+git reset --hard tags/libsql-rs-v${LIBSQL_RS_VERSION}
 
 cd ..
 cargo build --release
