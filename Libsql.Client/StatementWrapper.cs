@@ -159,6 +159,21 @@ namespace Libsql.Client
             return _database.Query(this);
         }
 
+        public void Reset()
+        {
+            var error = new Error();
+            int exitCode;
+
+            unsafe {
+                exitCode = Bindings.libsql_reset_stmt(Stmt, &error.Ptr);
+            }
+
+            _bindIndex = 1;
+
+            error.ThrowIfNonZero(exitCode, "Failed to reset statement");
+        }
+
+
         private void ReleaseUnmanagedResources()
         {
             Bindings.libsql_free_stmt(Stmt);

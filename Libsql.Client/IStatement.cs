@@ -17,5 +17,6 @@ namespace Libsql.Client
         void BindNull();
         Task<ulong> Execute();
         Task<IResultSet> Query();
+        void Reset();
     }
 }
