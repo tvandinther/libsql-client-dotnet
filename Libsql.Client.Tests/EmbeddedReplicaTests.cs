@@ -25,7 +25,7 @@ public class EmbeddedReplicaTests : IClassFixture<DatabaseContainer>
     {
         await DatabaseClient.Sync();
 
-        var rs = await DatabaseClient.Execute("SELECT COUNT(*) FROM albums");
+        var rs = await DatabaseClient.Query("SELECT COUNT(*) FROM albums");
 
         var count = rs.Rows.First().First();
         var value = Assert.IsType<Integer>(count);

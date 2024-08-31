@@ -136,8 +136,27 @@ namespace Libsql.Client
         
             error.ThrowIfNonZero(exitCode, "Failed to connect to database");
         }
+
+        public async Task<IResultSet> Query(string sql)
+        {
+            return await Task.Run(() =>
+            {
+                var statement = new Statement(_connection, sql);
+                return QueryStatement(statement);
+            });
+        }
+
+        public async Task<IResultSet> Query(string sql, params object[] args)
+        {
+            return await Task.Run(() => {
+                var statement = new Statement(_connection, sql);
+                statement.Bind(args);
+                
+                return QueryStatement(statement);
+            });
+        }
     
-        public async Task<IResultSet> Execute(string sql)
+        public async Task<ulong> Execute(string sql)
         {
             return await Task.Run(() =>
             {
@@ -146,7 +165,7 @@ namespace Libsql.Client
             });
         }
 
-        public async Task<IResultSet> Execute(string sql, params object[] args)
+        public async Task<ulong> Execute(string sql, params object[] args)
         {
             return await Task.Run(() => {
                 var statement = new Statement(_connection, sql);
@@ -156,8 +175,7 @@ namespace Libsql.Client
             });
         }
 
-        // TODO: Differentiate query statements and execute statements.
-        private unsafe IResultSet ExecuteStatement(Statement statement)
+        private unsafe IResultSet QueryStatement(Statement statement)
         {
             var error = new Error();
             var rows = new libsql_rows_t();
@@ -174,6 +192,19 @@ namespace Libsql.Client
                 rows.GetColumnNames(),
                 new Rows(rows)
             );
+        }
+
+        private unsafe ulong ExecuteStatement(Statement statement)
+        {
+            var error = new Error();
+            int exitCode;
+        
+            exitCode = Bindings.libsql_execute_stmt(statement.Stmt, &error.Ptr);
+            statement.Dispose();
+
+            error.ThrowIfNonZero(exitCode, "Failed to execute statement");
+
+            return Bindings.libsql_changes(_connection);
         }
 
         public async Task Sync()
