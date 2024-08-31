@@ -127,4 +127,33 @@ public class StatementTests
 
         Assert.Equal(3ul, rowsAffected);
     }
+
+    [Fact]
+    public async Task Statement_CanBeReset()
+    {
+        await _db.Execute("CREATE TABLE `test` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT)");
+        await _db.Execute("INSERT INTO `test` (`name`) VALUES ('a'), ('b'), ('c')");
+
+        using var statement = await _db.Prepare("SELECT `name` FROM `test` WHERE `id` = ?");
+        var firstExpected = "a";
+        var secondExpected = "b";
+
+        statement.Bind(new Integer(1));
+        var rs = await statement.Query();
+        var row = rs.Rows.First();
+        var value = row.First();
+        var text = Assert.IsType<Text>(value);
+
+        Assert.Equal(firstExpected, text);
+
+        statement.Reset();
+
+        statement.Bind(new Integer(2));
+        var rs2 = await statement.Query();
+        var row2 = rs2.Rows.First();
+        var value2 = row2.First();
+        var text2 = Assert.IsType<Text>(value2);
+
+        Assert.Equal(secondExpected, text2);
+    }
 }
