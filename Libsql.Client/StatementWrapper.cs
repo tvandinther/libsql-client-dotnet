@@ -74,7 +74,6 @@ namespace Libsql.Client
         {
             var error = new Error();
             var index = _bindIndex;
-            Console.WriteLine($"Binding int at index {index}");
             var exitCode = Bindings.libsql_bind_int(Stmt, index, value, &error.Ptr);
 
             error.ThrowIfNonZero(exitCode, $"Failed to bind integer at index {index} with value {value}");
@@ -85,7 +84,6 @@ namespace Libsql.Client
         {
             var error = new Error();
             var index = _bindIndex;
-            Console.WriteLine($"Binding int at index {index}");
             var exitCode = Bindings.libsql_bind_float(Stmt, index, value, &error.Ptr);
 
             error.ThrowIfNonZero(exitCode, $"Failed to bind integer at index {index} with value {value}");
@@ -96,7 +94,6 @@ namespace Libsql.Client
         {
             var error = new Error();
             var index = _bindIndex;
-            Console.WriteLine($"Binding int at index {index}");
             fixed (byte* sPtr = Encoding.UTF8.GetBytes(value)) {
                 var exitCode = Bindings.libsql_bind_string(Stmt, index, sPtr, &error.Ptr);
 
@@ -109,7 +106,6 @@ namespace Libsql.Client
         {
             var error = new Error();
             var index = _bindIndex;
-            Console.WriteLine($"Binding int at index {index}");
             fixed (byte* bPtr = value) {
                 var exitCode = Bindings.libsql_bind_blob(Stmt, index, bPtr, value.Length, &error.Ptr);
 
@@ -122,7 +118,6 @@ namespace Libsql.Client
         {
             var error = new Error();
             var index = _bindIndex;
-            Console.WriteLine($"Binding int at index {index}");
             var exitCode = Bindings.libsql_bind_null(Stmt, index, &error.Ptr);
 
             error.ThrowIfNonZero(exitCode, $"Failed to bind null at index {index}");

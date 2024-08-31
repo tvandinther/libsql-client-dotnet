@@ -8,7 +8,6 @@ public class ExecuteTests
     public async Task CreateTable_NoRowsAffected()
     {
         var rowsAffected = await _db.Execute("CREATE TABLE `test` (`id` INTEGER PRIMARY KEY AUTOINCREMENT)");
-        Console.WriteLine(rowsAffected);
 
         Assert.Equal(0ul, rowsAffected);
     }
