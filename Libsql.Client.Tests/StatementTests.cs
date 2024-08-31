@@ -13,7 +13,7 @@ public class StatementTests
     [Fact]
     public async Task Prepare_ReturnedStatement_CanBeExecuted()
     {
-        var statement = await _db.Prepare("SELECT `id` FROM `test` WHERE `name` = ?");
+        using var statement = await _db.Prepare("SELECT `id` FROM `test` WHERE `name` = ?");
 
         Assert.NotNull(statement);
         Assert.IsAssignableFrom<IStatement>(statement);
@@ -22,7 +22,7 @@ public class StatementTests
     [Fact]
     public async Task Statement_CanBind_Integer()
     {
-        var statement = await _db.Prepare("SELECT ?");
+        using var statement = await _db.Prepare("SELECT ?");
         var expected = 1;
 
         statement.Bind(new Integer(expected));
@@ -37,7 +37,7 @@ public class StatementTests
     [Fact]
     public async Task Statement_CanBind_Real()
     {
-        var statement = await _db.Prepare("SELECT ?");
+        using var statement = await _db.Prepare("SELECT ?");
         var expected = 0.5;
 
         statement.Bind(expected);
@@ -52,7 +52,7 @@ public class StatementTests
     [Fact]
     public async Task Statement_CanBind_Text()
     {
-        var statement = await _db.Prepare("SELECT ?");
+        using var statement = await _db.Prepare("SELECT ?");
         var expected = "hello";
 
         statement.Bind(expected);
@@ -67,7 +67,7 @@ public class StatementTests
     [Fact]
     public async Task Statement_CanBind_Blob()
     {
-        var statement = await _db.Prepare("SELECT ?");
+        using var statement = await _db.Prepare("SELECT ?");
         var expected = new byte[]{30, 9, 42, 76};
 
         statement.Bind(expected);
@@ -82,7 +82,7 @@ public class StatementTests
     [Fact]
     public async Task Statement_CanBind_Null()
     {
-        var statement = await _db.Prepare("SELECT ?");
+        using var statement = await _db.Prepare("SELECT ?");
 
         statement.BindNull();
         var rs = await statement.Query();
@@ -95,7 +95,7 @@ public class StatementTests
     [Fact]
     public async Task Statement_BoundValuesCount_IsCorrect()
     {
-        var statement = await _db.Prepare("SELECT ?, ?, ?");
+        using var statement = await _db.Prepare("SELECT ?, ?, ?");
         statement.Bind("One");
         statement.Bind("Two");
         statement.Bind("Three");

@@ -124,17 +124,6 @@ namespace Libsql.Client
             _bindIndex++;
         }
 
-        private void ReleaseUnmanagedResources()
-        {
-            Bindings.libsql_free_stmt(Stmt);
-        }
-
-        public void Dispose()
-        {
-            ReleaseUnmanagedResources();
-            GC.SuppressFinalize(this);
-        }
-
         public void Bind(Integer integer)
         {
             BindInt(integer.Value);
@@ -168,6 +157,20 @@ namespace Libsql.Client
         public Task<IResultSet> Query()
         {
             return _database.Query(this);
+        }
+
+        private void ReleaseUnmanagedResources()
+        {
+            unsafe {
+                Console.WriteLine($"Freeing {(int) Stmt.ptr}");
+            }
+            Bindings.libsql_free_stmt(Stmt);
+        }
+
+        public void Dispose()
+        {
+            ReleaseUnmanagedResources();
+            GC.SuppressFinalize(this);
         }
 
         ~StatementWrapper()

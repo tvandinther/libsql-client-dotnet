@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 
 namespace Libsql.Client
@@ -5,7 +6,7 @@ namespace Libsql.Client
     /// <summary>
     /// Represents the result set of a SQL query.
     /// </summary>
-    public interface IStatement
+    public interface IStatement : IDisposable
     {
         int BoundValuesCount { get; }
         void Bind(Integer integer);
