@@ -152,7 +152,7 @@ namespace Libsql.Client
 
         public void Bind(Text text)
         {
-            throw new NotImplementedException();
+            BindString(text.Value);
         }
 
         public void Bind(Blob blob)

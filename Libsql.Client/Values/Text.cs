@@ -22,6 +22,10 @@ namespace Libsql.Client
         public static bool operator ==(Text left, Text right) => left?.Value == right?.Value;
         
         public static bool operator !=(Text left, Text right) => !(left == right);
+
+        public static implicit operator Text(string value) => new Text(value);
+
+        public static implicit operator string(Text text) => text.Value;
         
         public override bool Equals(Value other)
         {
