@@ -23,13 +23,26 @@ public class StatementTests
     public async Task Statement_CanBind_Integer()
     {
         var statement = await _db.Prepare("SELECT ?");
-
-        statement.Bind(1);
+        statement.Bind(new Integer(1));
         var rs = await statement.Query();
         var row = rs.Rows.First();
         var value = row.First();
         var integer = Assert.IsType<Integer>(value);
 
         Assert.Equal<int>(1, integer);
+    }
+
+    [Fact]
+    public async Task Statement_CanBind_Real()
+    {
+        var statement = await _db.Prepare("SELECT ?");
+
+        statement.Bind(0.5);
+        var rs = await statement.Query();
+        var row = rs.Rows.First();
+        var value = row.First();
+        var integer = Assert.IsType<Real>(value);
+
+        Assert.Equal<double>(0.5, integer);
     }
 }

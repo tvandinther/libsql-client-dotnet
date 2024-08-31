@@ -145,17 +145,17 @@ namespace Libsql.Client
             BindInt(integer.Value);
         }
 
-        public void Bind(Blob blob)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Bind(Real real)
         {
-            throw new NotImplementedException();
+            BindFloat(real.Value);
         }
 
         public void Bind(Text text)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Bind(Blob blob)
         {
             throw new NotImplementedException();
         }
