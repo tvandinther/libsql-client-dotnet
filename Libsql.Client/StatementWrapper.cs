@@ -157,7 +157,7 @@ namespace Libsql.Client
 
         public void Bind(Blob blob)
         {
-            throw new NotImplementedException();
+            BindBlob(blob.Value);
         }
 
         public void BindNull()
