@@ -91,4 +91,17 @@ public class StatementTests
 
         Assert.IsType<Null>(value);
     }
+
+    [Fact]
+    public async Task Statement_BoundValuesCount_IsCorrect()
+    {
+        var statement = await _db.Prepare("SELECT ?, ?, ?");
+        statement.Bind("One");
+        statement.Bind("Two");
+        statement.Bind("Three");
+
+        var numberOfBoundValues = statement.BoundValuesCount;
+
+        Assert.Equal(3, numberOfBoundValues);
+    }
 }
