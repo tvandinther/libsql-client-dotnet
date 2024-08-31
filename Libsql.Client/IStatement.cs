@@ -9,10 +9,10 @@ namespace Libsql.Client
     {
         int ValuesBound { get; }
         void Bind(Integer integer);
-        // void Bind(int integer);
-        void Bind(Blob blob);
+        
         void Bind(Real real);
         void Bind(Text text);
+        void Bind(Blob blob);
         void BindNull();
         Task<ulong> Execute();
         Task<IResultSet> Query();
