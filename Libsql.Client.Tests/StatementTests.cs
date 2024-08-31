@@ -78,4 +78,17 @@ public class StatementTests
 
         Assert.Equal<byte[]>(expected, blob);
     }
+
+    [Fact]
+    public async Task Statement_CanBind_Null()
+    {
+        var statement = await _db.Prepare("SELECT ?");
+
+        statement.BindNull();
+        var rs = await statement.Query();
+        var row = rs.Rows.First();
+        var value = row.First();
+
+        Assert.IsType<Null>(value);
+    }
 }

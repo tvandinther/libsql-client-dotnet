@@ -162,7 +162,7 @@ namespace Libsql.Client
 
         public void BindNull()
         {
-            throw new NotImplementedException();
+            Bind();
         }
 
         public Task<ulong> Execute()
