@@ -7,7 +7,7 @@ public class RowsTests : IDisposable
     [Fact]
     public async Task Rows_WhenEmpty()
     {
-        var rs = await _db.Execute("SELECT 1 WHERE 1 = 0");
+        var rs = await _db.Query("SELECT 1 WHERE 1 = 0");
         var rows = rs.Rows;
         
         Assert.Empty(rows);
@@ -16,7 +16,7 @@ public class RowsTests : IDisposable
     [Fact]
     public async Task Rows_CanIterateTwice()
     {
-        var rs = await _db.Execute("SELECT 1");
+        var rs = await _db.Query("SELECT 1");
         
         var firstArray = rs.Rows.ToArray();
         var secondArray = rs.Rows.ToArray();
@@ -27,7 +27,7 @@ public class RowsTests : IDisposable
     [Fact]
     public async Task Rows_CanPartiallyIterateTwice()
     {
-        var rs = await _db.Execute("SELECT 1 UNION SELECT 2 UNION SELECT 3");
+        var rs = await _db.Query("SELECT 1 UNION SELECT 2 UNION SELECT 3");
         
         var firstArray = rs.Rows.Take(2).ToArray();
         var secondArray = rs.Rows.ToArray();
