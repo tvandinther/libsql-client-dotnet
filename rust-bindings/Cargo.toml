@@ -5,10 +5,14 @@ members = [
 ]
 
 [workspace.dependencies]
-rusqlite = { package = "libsql-rusqlite", path = "libsql/vendored/rusqlite", version = "0.29", default-features = false, features = [
+rusqlite = { package = "libsql-rusqlite", path = "libsql/vendored/rusqlite", version = "0.32", default-features = false, features = [
     "libsql-experimental",
     "column_decltype",
     "load_extension",
     "modern_sqlite",
     "functions",
+    "limits",
+    "hooks",
 ] }
+hyper = { version = "0.14" }
+tower = { version = "0.4.13" }
