@@ -144,18 +144,22 @@ namespace Libsql.Client
         {
             return Task.Run(() =>
             {
-                var statement = new StatementWrapper(this, _connection, sql);
-                return QueryStatement(statement);
+                using (var statement = new StatementWrapper(this, _connection, sql))
+                {
+                    return QueryStatement(statement);
+                }
             });
         }
 
         public Task<IResultSet> Query(string sql, params object[] args)
         {
             return Task.Run(() => {
-                var statement = new StatementWrapper(this, _connection, sql);
-                statement.BindAll(args);
-                
-                return QueryStatement(statement);
+                using (var statement = new StatementWrapper(this, _connection, sql))
+                {
+                    statement.BindAll(args);
+                    
+                    return QueryStatement(statement);
+                }
             });
         }
     
@@ -163,18 +167,22 @@ namespace Libsql.Client
         {
             return Task.Run(() =>
             {
-                var statement = new StatementWrapper(this, _connection, sql);
-                return ExecuteStatement(statement);
+                using (var statement = new StatementWrapper(this, _connection, sql))
+                {
+                    return ExecuteStatement(statement);
+                };
             });
         }
 
         public Task<ulong> Execute(string sql, params object[] args)
         {
             return Task.Run(() => {
-                var statement = new StatementWrapper(this, _connection, sql);
-                statement.BindAll(args);
+                using (var statement = new StatementWrapper(this, _connection, sql))
+                {
+                    statement.BindAll(args);
                 
-                return ExecuteStatement(statement);
+                    return ExecuteStatement(statement);
+                }
             });
         }
         
@@ -210,7 +218,6 @@ namespace Libsql.Client
             int exitCode;
         
             exitCode = Bindings.libsql_query_stmt(statement.Stmt, &rows, &error.Ptr);
-            statement.Dispose();
 
             error.ThrowIfNonZero(exitCode, "Failed to execute statement");
         
@@ -228,7 +235,6 @@ namespace Libsql.Client
             int exitCode;
         
             exitCode = Bindings.libsql_execute_stmt(statement.Stmt, &error.Ptr);
-            statement.Dispose();
 
             error.ThrowIfNonZero(exitCode, "Failed to execute statement");
 
