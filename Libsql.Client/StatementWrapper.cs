@@ -7,7 +7,7 @@ namespace Libsql.Client
 {
     internal class StatementWrapper : IStatement
     {
-        int IStatement.ValuesBound => _bindIndex - 1;
+        int IStatement.BoundValuesCount => _bindIndex - 1;
         private int _bindIndex = 1;
         public readonly libsql_stmt_t Stmt;
         private readonly libsql_connection_t _connection;

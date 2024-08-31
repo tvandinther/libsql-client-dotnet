@@ -7,7 +7,7 @@ namespace Libsql.Client
     /// </summary>
     public interface IStatement
     {
-        int ValuesBound { get; }
+        int BoundValuesCount { get; }
         void Bind(Integer integer);
         
         void Bind(Real real);
