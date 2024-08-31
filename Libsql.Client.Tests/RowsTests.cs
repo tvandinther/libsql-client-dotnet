@@ -3,6 +3,48 @@
 public class RowsTests : IDisposable
 {
     private readonly IDatabaseClient _db = DatabaseClient.Create().Result;
+
+    [Fact]
+    public async Task IteratedRows_Throws_WhenCreate()
+    {
+        async Task<IEnumerable<IEnumerable<Value>>> Action() {
+            var rs = await _db.Query("CREATE TABLE `test` (`id` INTEGER PRIMARY KEY AUTOINCREMENT)");
+
+            return rs.Rows.ToList();
+        }
+        
+        await Assert.ThrowsAsync<LibsqlException>(Action);
+    }
+
+    [Fact]
+    public async Task IteratedRows_Throws_WhenCreateIfNotExists()
+    {
+        var rs = await _db.Query("CREATE TABLE IF NOT EXISTS `test` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT)");
+        
+        Assert.Empty(rs.Rows);
+    }
+
+    [Fact]
+    public async Task Rows_Empty_WhenInsert()
+    {
+        await _db.Query("CREATE TABLE `test` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT)");
+
+        var rs = await _db.Query("INSERT INTO `test` (`name`) VALUES ('libsql')");
+        
+        Assert.Empty(rs.Rows);
+    }
+
+    [Fact]
+    public async Task Rows_Empty_WhenUpdate()
+    {
+        await _db.Query("CREATE TABLE `test` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT)");
+        var rs = await _db.Query("INSERT INTO `test` (`name`) VALUES ('libsql')");
+        Assert.Equal(1ul, rs.RowsAffected);
+
+        var rs2 = await _db.Query("UPDATE `test` SET `name` = 'libsql2' WHERE id = 1");
+        
+        Assert.Empty(rs2.Rows);
+    }
     
     [Fact]
     public async Task Rows_WhenEmpty()

@@ -101,7 +101,7 @@ await statement.Query(userId);
 
 #### `Execute` vs. `Query`
 
-`Execute` returns only the number of affected rows and is intended for statements where further detail is not necessary.
+`Execute` returns only the number of affected rows and is intended for statements where further detail is not necessary. A `LibSqlException` will be thrown if you use `Execute` on a statement that returns rows.
 
 `Query` returns a more useful `IResultSet` object which can be read for additional information such as the number of affected rows, the last inserted row ID, the column names, and the rows themselves.
 

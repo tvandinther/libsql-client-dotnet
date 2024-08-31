@@ -44,6 +44,14 @@ public class ResultSetTests : IDisposable
     }
 
     [Fact]
+    public async Task LastInsertRowId_Zero_WhenNonQuery()
+    {
+        var rs = await _db.Query("CREATE TABLE `test` (`id` INTEGER PRIMARY KEY AUTOINCREMENT)");
+
+        Assert.Equal(0, rs.LastInsertRowId);
+    }
+
+    [Fact]
     public async Task LastInsertRowId_ReturnsExpectedValue()
     {
         await _db.Execute("CREATE TABLE `test` (`id` INTEGER PRIMARY KEY AUTOINCREMENT)");
@@ -64,6 +72,14 @@ public class ResultSetTests : IDisposable
             rs = await _db.Query("INSERT INTO `test` DEFAULT VALUES");
             Assert.Equal(i + 1, rs.LastInsertRowId);
         }
+    }
+
+    [Fact]
+    public async Task RowsAffected_Zero_WhenNonQuery()
+    {
+        var rs = await _db.Query("CREATE TABLE `test` (`id` INTEGER PRIMARY KEY AUTOINCREMENT)");
+
+        Assert.Equal(0ul, rs.RowsAffected);
     }
 
     [Fact]
