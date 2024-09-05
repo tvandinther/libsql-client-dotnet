@@ -13,6 +13,7 @@ namespace Libsql.Client
         /// <param name="sql">The SQL query to execute.</param>
         /// <returns>The result set returned by the query.</returns>
         /// <exception cref="LibsqlException">Thrown when the query fails to execute.</exception>
+        /// <remarks>Use <see cref="Execute(string)"/> if your prepared statement does not return rows.</remarks>
         Task<IResultSet> Query(string sql);
 
         /// <summary>
@@ -22,6 +23,7 @@ namespace Libsql.Client
         /// <param name="args">The parameters to use in the query.</param>
         /// <returns>The result set returned by the query.</returns>
         /// <exception cref="LibsqlException">Thrown when the query fails to execute.</exception>
+        /// <remarks>Use <see cref="Execute(string, object[])"/> if your prepared statement does not return rows.</remarks>
         Task<IResultSet> Query(string sql, params object[] args);
 
         /// <summary>
@@ -30,6 +32,7 @@ namespace Libsql.Client
         /// <param name="statement">The prepared statement to execute.</param>
         /// <returns>The result set returned by the prepared statement.</returns>
         /// <exception cref="LibsqlException">Thrown when the prepared statement fails to execute.</exception>
+        /// <remarks>Use <see cref="Execute(IStatement)"/> if your prepared statement does not return rows.</remarks>
         Task<IResultSet> Query(IStatement statement);
 
         /// <summary>
@@ -38,6 +41,7 @@ namespace Libsql.Client
         /// <param name="sql">The SQL query to execute.</param>
         /// <returns>The number of affected rows.</returns>
         /// <exception cref="LibsqlException">Thrown when the SQL fails to execute.</exception>
+        /// <remarks>Use <see cref="Query(string)"/> if your prepared statement returns rows.</remarks>
         Task<ulong> Execute(string sql);
 
         /// <summary>
@@ -47,6 +51,7 @@ namespace Libsql.Client
         /// <param name="args">The parameters to use in the query.</param>
         /// <returns>The number of affected rows.</returns>
         /// <exception cref="LibsqlException">Thrown when the SQL fails to execute.</exception>
+        /// <remarks>Use <see cref="Query(string, object[])"/> if your prepared statement returns rows.</remarks>
         Task<ulong> Execute(string sql, params object[] args);
 
         /// <summary>
@@ -55,6 +60,7 @@ namespace Libsql.Client
         /// <param name="statement">The prepared statement to execute.</param>
         /// <returns>The number of affected rows.</returns>
         /// <exception cref="LibsqlException">Thrown when the prepared statement fails to execute.</exception>
+        /// <remarks>Use <see cref="Query(IStatement)"/> if your prepared statement returns rows.</remarks>
         Task<ulong> Execute(IStatement statement);
 
         /// <summary>
