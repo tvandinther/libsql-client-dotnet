@@ -8,6 +8,9 @@ namespace Libsql.Client
     internal class StatementWrapper : IStatement
     {
         int IStatement.BoundValuesCount => _bindIndex - 1;
+
+        public int ParameterCount => GetParameterCount();
+
         private int _bindIndex = 1;
         public readonly libsql_stmt_t Stmt;
         private readonly libsql_connection_t _connection;
@@ -118,6 +121,17 @@ namespace Libsql.Client
 
             error.ThrowIfNonZero(exitCode, $"Failed to bind null at index {index}");
             _bindIndex++;
+        }
+
+        private unsafe int GetParameterCount()
+        {
+            var error = new Error();
+            int count;
+            var exitCode = Bindings.libsql_stmt_parameter_count(Stmt, &count,&error.Ptr);
+
+            error.ThrowIfNonZero(exitCode, $"Failed to get parameter count");
+
+            return count;
         }
 
         public void Bind(Integer integer, int index)
