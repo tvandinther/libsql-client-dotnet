@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
+using Libsql.Client.Extensions;
 
 namespace Libsql.Client
 {
@@ -132,6 +133,27 @@ namespace Libsql.Client
             error.ThrowIfNonZero(exitCode, $"Failed to get parameter count");
 
             return count;
+        }
+
+        public string GetParameterNameAtIndex(int index)
+        {
+            unsafe {
+                var error = new Error();
+                var ptr = (byte*)0;
+                var exitCode = Bindings.libsql_stmt_parameter_name(Stmt, index, &ptr, &error.Ptr);
+
+                error.ThrowIfNonZero(exitCode, "Failed to get parameter name");
+
+                var text = CustomMarshal.PtrToStringUTF8((IntPtr)ptr);
+                Bindings.libsql_free_string(ptr);
+
+                if (text is null)
+                {
+                    throw new InvalidOperationException("Text was marshalled to null");   
+                }
+
+                return text.Substring(1);
+            }
         }
 
         public void Bind(Integer integer, int index)

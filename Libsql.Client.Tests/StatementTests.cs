@@ -138,6 +138,21 @@ public class StatementTests
         Assert.Equal<int>(expected, integer);
     }
 
+    [Theory]
+    // [InlineData("SELECT ?123", "123")] // TODO: throws exception, make test for this
+    // [InlineData("SELECT ?foo", "123")] // TODO: throws exception, make test for this
+    [InlineData("SELECT :test", "test")]
+    [InlineData("SELECT @test", "test")]
+    [InlineData("SELECT $test", "test")]
+    public async Task Statement_canGet_ParameterName(string query, string expected)
+    {
+        using var statement = await _db.Prepare(query);
+
+        var name = statement.GetParameterNameAtIndex(1);
+
+        Assert.Equal(expected, name);
+    }
+
     [Fact]
     public async Task Statement_CanExecute()
     {

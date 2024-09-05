@@ -22,6 +22,8 @@ namespace Libsql.Client
         /// </remarks>
         int ParameterCount { get; }
 
+        string GetParameterNameAtIndex(int index);
+
         /// <summary>
         /// Binds a value to the prepared statement.
         /// </summary>
