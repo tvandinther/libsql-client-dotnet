@@ -92,6 +92,24 @@ public class StatementTests
         Assert.Equal(expected, text.Value);
     }
 
+    [Theory]
+    [InlineData("SELECT 1", 0)]
+    [InlineData("SELECT ?", 1)]
+    [InlineData("SELECT ?, ?", 2)]
+    [InlineData("SELECT ?, ?, ?", 3)]
+    [InlineData("SELECT ?10, ?11, ?33", 33)]
+    [InlineData("SELECT ?10, ?33, ?11", 33)]
+    [InlineData("SELECT ?, ?, ?2", 2)]
+    [InlineData("SELECT ?, ?, ?2, ?, ?", 4)]
+    public async Task Statement_CanGetParameterCount(string query, int expected)
+    {
+        using var statement = await _db.Prepare(query);
+
+        var parameterCount = statement.ParameterCount;
+
+        Assert.Equal(expected, parameterCount);
+    }
+
     [Fact]
     public async Task Statement_BoundValuesCount_IsCorrect()
     {

@@ -14,6 +14,15 @@ namespace Libsql.Client
         int BoundValuesCount { get; }
 
         /// <summary>
+        /// Gets the number of parameters in the prepared statement.
+        /// </summary>
+        /// <remarks>
+        /// If <c>?NNN</c> syntax is used, the Parameter count is the maximum value of 
+        /// <c>NNN</c> used plus any unannotated positional parameters to the right.
+        /// </remarks>
+        int ParameterCount { get; }
+
+        /// <summary>
         /// Binds a value to the prepared statement.
         /// </summary>
         /// <param name="integer">The <see cref="Integer"/> value to bind.</param>
