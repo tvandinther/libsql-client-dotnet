@@ -24,6 +24,10 @@ namespace Libsql.Client
 
         public static bool operator !=(Real left, Real right) => !(left == right);
 
+        public static implicit operator Real(double value) => new Real(value);
+        
+        public static implicit operator double(Real integer) => integer.Value;
+
         public override bool Equals(Value other)
         {
             if (other is Real otherReal)

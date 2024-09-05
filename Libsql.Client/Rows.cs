@@ -123,7 +123,7 @@ namespace Libsql.Client
                     _enumeratorData.ColumnTypes[i] == ValueType.Text ? row.GetText(i) :
                     _enumeratorData.ColumnTypes[i] == ValueType.Blob ? row.GetBlob(i) :
                     _enumeratorData.ColumnTypes[i] == ValueType.Null ? (Value)new Null() :
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException($"Non-exhaustive check. Could not find a case to match value of {_enumeratorData.ColumnTypes[i]}");
             
                 parsedRow[i] = value;
             }
