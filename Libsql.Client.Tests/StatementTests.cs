@@ -10,7 +10,7 @@ public class StatementTests
         using var statement = await _db.Prepare("SELECT ?");
         var expected = 1;
 
-        statement.Bind(new Integer(expected));
+        statement.Bind(new Integer(expected), 1);
         var rs = await statement.Query();
         var row = rs.Rows.First();
         var value = row.First();
@@ -25,7 +25,7 @@ public class StatementTests
         using var statement = await _db.Prepare("SELECT ?");
         var expected = 0.5;
 
-        statement.Bind(expected);
+        statement.Bind(expected, 1);
         var rs = await statement.Query();
         var row = rs.Rows.First();
         var value = row.First();
@@ -40,7 +40,7 @@ public class StatementTests
         using var statement = await _db.Prepare("SELECT ?");
         var expected = "hello";
 
-        statement.Bind(expected);
+        statement.Bind(expected, 1);
         var rs = await statement.Query();
         var row = rs.Rows.First();
         var value = row.First();
@@ -55,7 +55,7 @@ public class StatementTests
         using var statement = await _db.Prepare("SELECT ?");
         var expected = new byte[]{30, 9, 42, 76};
 
-        statement.Bind(expected);
+        statement.Bind(expected, 1);
         var rs = await statement.Query();
         var row = rs.Rows.First();
         var value = row.First();
@@ -69,7 +69,7 @@ public class StatementTests
     {
         using var statement = await _db.Prepare("SELECT ?");
 
-        statement.BindNull();
+        statement.BindNull(1);
         var rs = await statement.Query();
         var row = rs.Rows.First();
         var value = row.First();
@@ -78,12 +78,27 @@ public class StatementTests
     }
 
     [Fact]
+    public async Task Statement_CanBind_NNNIndex()
+    {
+        using var statement = await _db.Prepare("SELECT ?123");
+        var expected = "Parameter annotated as the 123rd position";
+
+        statement.Bind(expected, 123);
+        var rs = await statement.Query();
+        var row = rs.Rows.First();
+        var value = row.First();
+
+        var text = Assert.IsType<Text>(value);
+        Assert.Equal(expected, text.Value);
+    }
+
+    [Fact]
     public async Task Statement_BoundValuesCount_IsCorrect()
     {
         using var statement = await _db.Prepare("SELECT ?, ?, ?");
-        statement.Bind("One");
-        statement.Bind("Two");
-        statement.Bind("Three");
+        statement.Bind("One", 1);
+        statement.Bind("Two", 2);
+        statement.Bind("Three", 3);
 
         var numberOfBoundValues = statement.BoundValuesCount;
 
@@ -96,7 +111,7 @@ public class StatementTests
         using var statement = await _db.Prepare("SELECT ?");
         var expected = 1;
 
-        statement.Bind(new Integer(expected));
+        statement.Bind(new Integer(expected), 1);
         var rs = await _db.Query(statement);
         var row = rs.Rows.First();
         var value = row.First();
@@ -138,7 +153,7 @@ public class StatementTests
         var firstExpected = "a";
         var secondExpected = "b";
 
-        statement.Bind(new Integer(1));
+        statement.Bind(new Integer(1), 1);
         var rs = await statement.Query();
         var row = rs.Rows.First();
         var value = row.First();
@@ -148,7 +163,7 @@ public class StatementTests
 
         statement.Reset();
 
-        statement.Bind(new Integer(2));
+        statement.Bind(new Integer(2), 1);
         var rs2 = await statement.Query();
         var row2 = rs2.Rows.First();
         var value2 = row2.First();

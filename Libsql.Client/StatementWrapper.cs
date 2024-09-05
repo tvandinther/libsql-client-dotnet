@@ -44,24 +44,25 @@ namespace Libsql.Client
             }
             else 
             {
-                foreach (var arg in values)
+                for (int i = 1; i <= values.Length; i++)
                 {
+                    object arg = values[i - 1];
                     switch (arg)
                     {
                         case int val:
-                            BindInt(val);
+                            BindInt(val, i);
                             break;
                         case double d:
-                            BindFloat(d);
+                            BindFloat(d, i);
                             break;
                         case string s:
-                            BindString(s);
+                            BindString(s, i);
                             break;
                         case byte[] b:
-                            BindBlob(b);
+                            BindBlob(b, i);
                             break;
                         case null:
-                            Bind();
+                            Bind(i);
                             break;
                         default:
                             throw new ArgumentException($"Unsupported argument type: {arg.GetType()}");
@@ -70,30 +71,27 @@ namespace Libsql.Client
             }
         }
 
-        private unsafe void BindInt(int value)
+        private unsafe void BindInt(int value, int index)
         {
             var error = new Error();
-            var index = _bindIndex;
             var exitCode = Bindings.libsql_bind_int(Stmt, index, value, &error.Ptr);
 
             error.ThrowIfNonZero(exitCode, $"Failed to bind integer at index {index} with value {value}");
             _bindIndex++;
         }
 
-        private unsafe void BindFloat(double value)
+        private unsafe void BindFloat(double value, int index)
         {
             var error = new Error();
-            var index = _bindIndex;
             var exitCode = Bindings.libsql_bind_float(Stmt, index, value, &error.Ptr);
 
             error.ThrowIfNonZero(exitCode, $"Failed to bind integer at index {index} with value {value}");
             _bindIndex++;
         }
 
-        private unsafe void BindString(string value)
+        private unsafe void BindString(string value, int index)
         {
             var error = new Error();
-            var index = _bindIndex;
             fixed (byte* sPtr = Encoding.UTF8.GetBytes(value)) {
                 var exitCode = Bindings.libsql_bind_string(Stmt, index, sPtr, &error.Ptr);
 
@@ -102,10 +100,9 @@ namespace Libsql.Client
             _bindIndex++;
         }
 
-        private unsafe void BindBlob(byte[] value)
+        private unsafe void BindBlob(byte[] value, int index)
         {
             var error = new Error();
-            var index = _bindIndex;
             fixed (byte* bPtr = value) {
                 var exitCode = Bindings.libsql_bind_blob(Stmt, index, bPtr, value.Length, &error.Ptr);
 
@@ -114,39 +111,38 @@ namespace Libsql.Client
             _bindIndex++;
         }
 
-        private unsafe void Bind()
+        private unsafe void Bind(int index)
         {
             var error = new Error();
-            var index = _bindIndex;
             var exitCode = Bindings.libsql_bind_null(Stmt, index, &error.Ptr);
 
             error.ThrowIfNonZero(exitCode, $"Failed to bind null at index {index}");
             _bindIndex++;
         }
 
-        public void Bind(Integer integer)
+        public void Bind(Integer integer, int index)
         {
-            BindInt(integer.Value);
+            BindInt(integer.Value, index);
         }
 
-        public void Bind(Real real)
+        public void Bind(Real real, int index)
         {
-            BindFloat(real.Value);
+            BindFloat(real.Value, index);
         }
 
-        public void Bind(Text text)
+        public void Bind(Text text, int index)
         {
-            BindString(text.Value);
+            BindString(text.Value, index);
         }
 
-        public void Bind(Blob blob)
+        public void Bind(Blob blob, int index)
         {
-            BindBlob(blob.Value);
+            BindBlob(blob.Value, index);
         }
 
-        public void BindNull()
+        public void BindNull(int index)
         {
-            Bind();
+            Bind(index);
         }
 
         public Task<ulong> Execute()
