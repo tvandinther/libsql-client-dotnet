@@ -31,7 +31,7 @@ For an example, see the Demo project in the repository.
 
 ```csharp
 // Create an in-memory database.
-var dbClient = DatabaseClient.Create(opts => {
+var dbClient = await DatabaseClient.Create(opts => {
     opts.Url = ":memory:";
 });
 ```
@@ -80,7 +80,7 @@ dbClient.Dispose();
 or with a `using` statement:
 
 ```csharp
-using (var dbClient = DatabaseClient.Create(opts => {
+using (var dbClient = await DatabaseClient.Create(opts => {
     opts.Url = ":memory:";
 }))
 {

@@ -1,7 +1,7 @@
 ﻿using Libsql.Client;
 
 // Create a database client using the static factory method
-var dbClient = await DatabaseClient.Create(opts => {
+using var dbClient = await DatabaseClient.Create(opts => {
     opts.Url = ":memory:";
 });
 

@@ -6,7 +6,7 @@ using Libsql.Client.Extensions;
 
 namespace Libsql.Client
 {
-    internal class DatabaseWrapper : IDatabaseClient, IDisposable
+    internal class DatabaseWrapper : IDatabaseClient
     {
         private libsql_database_t _db;
         private libsql_connection_t _connection;
