@@ -1,6 +1,6 @@
 namespace Libsql.Client.Tests;
 
-public class ResultSetTests
+public class ResultSetTests : IDisposable
 {
     private readonly IDatabaseClient _db = DatabaseClient.Create().Result;
 
@@ -89,5 +89,11 @@ public class ResultSetTests
         var rs2 = await _db.Execute("UPDATE `test` SET `value` = 1");
 
         Assert.Equal(10ul, rs2.RowsAffected);
+    }
+
+    public void Dispose()
+    {
+        _db.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

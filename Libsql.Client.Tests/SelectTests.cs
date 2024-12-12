@@ -1,6 +1,6 @@
 namespace Libsql.Client.Tests;
 
-public class SelectTests
+public class SelectTests : IDisposable
 {
     private readonly IDatabaseClient _db = DatabaseClient.Create().Result;
 
@@ -117,5 +117,11 @@ public class SelectTests
         var row = rs.Rows.First();
         var value = row.First();
         Assert.IsType<Null>(value);
+    }
+
+    public void Dispose()
+    {
+        _db.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

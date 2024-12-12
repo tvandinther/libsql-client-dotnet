@@ -2,7 +2,7 @@ using DotNet.Testcontainers.Containers;
 
 namespace Libsql.Client.Tests;
 
-public class EmbeddedReplicaTests : IClassFixture<DatabaseContainer>
+public class EmbeddedReplicaTests : IClassFixture<DatabaseContainer>, IDisposable
 {
     public IDatabaseClient DatabaseClient { get; }
 
@@ -37,5 +37,11 @@ public class EmbeddedReplicaTests : IClassFixture<DatabaseContainer>
     public async Task CanCallSync()
     {
         await DatabaseClient.Sync();
+    }
+
+    public void Dispose()
+    {
+        DatabaseClient.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Libsql.Client.Tests;
 
-public class PositionalArgumentTests
+public class PositionalArgumentTests : IDisposable
 {
     private readonly IDatabaseClient _db = DatabaseClient.Create().Result;
 
@@ -85,5 +85,11 @@ public class PositionalArgumentTests
         var blob = Assert.IsType<Blob>(value);
         
         Assert.Equal(new byte[] { 1, 2, 3 }, blob.Value);
+    }
+
+    public void Dispose()
+    {
+        _db.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

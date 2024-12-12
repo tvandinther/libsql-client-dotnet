@@ -1,6 +1,6 @@
 ﻿namespace Libsql.Client.Tests;
 
-public class RowsTests
+public class RowsTests : IDisposable
 {
     private readonly IDatabaseClient _db = DatabaseClient.Create().Result;
     
@@ -37,5 +37,11 @@ public class RowsTests
         Assert.Equal(3, secondArray.Length);
         var expected = new []{new Integer(1), new Integer(2), new Integer(3)};
         Assert.Equal(expected, secondArray.Select(x => x.First() as Integer).ToArray());
+    }
+
+    public void Dispose()
+    {
+        _db.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

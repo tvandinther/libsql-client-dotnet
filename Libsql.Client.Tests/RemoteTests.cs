@@ -2,7 +2,7 @@ using DotNet.Testcontainers.Containers;
 
 namespace Libsql.Client.Tests;
 
-public class RemoteTests : IClassFixture<DatabaseContainer>
+public class RemoteTests : IClassFixture<DatabaseContainer>, IDisposable
 {
     public IDatabaseClient DatabaseClient { get; }
 
@@ -27,5 +27,11 @@ public class RemoteTests : IClassFixture<DatabaseContainer>
         var count = rs.Rows.First().First();
         var value = Assert.IsType<Integer>(count);
         Assert.Equal(3503, value.Value);
+    }
+
+    public void Dispose()
+    {
+        DatabaseClient.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

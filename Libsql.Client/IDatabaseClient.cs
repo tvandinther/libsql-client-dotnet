@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 
 namespace Libsql.Client
@@ -5,7 +6,7 @@ namespace Libsql.Client
     /// <summary>
     /// Interface for a Libsql database client.
     /// </summary>
-    public interface IDatabaseClient
+    public interface IDatabaseClient : IDisposable
     {
         /// <summary>
         /// Executes the given SQL query and returns the result set.
