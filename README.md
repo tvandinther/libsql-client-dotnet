@@ -29,10 +29,29 @@ For an example, see the Demo project in the repository.
 
 ### Creating a Database
 
+You can open a database in different locations:
+
+1. In-Memory Database
 ```csharp
 // Create an in-memory database.
 var dbClient = await DatabaseClient.Create(opts => {
     opts.Url = ":memory:";
+});
+```
+
+2. From a File
+```csharp
+// Creates or opens a database stored in a local file.
+var dbClient = await DatabaseClient.Create(opts => {
+    opts.Url = "file:./mydb.sqlite";
+});
+```
+
+3. From a Connection String
+```csharp
+// Opens a database using a full connection string.
+var dbClient = await DatabaseClient.Create(opts => {
+    opts.Url = "file:./mydb.sqlite?mode=rwc";
 });
 ```
 

@@ -18,7 +18,21 @@
         /// <summary>
         /// Gets or sets the URL of the database server.
         /// </summary>
-        /// <remarks>Default: <c>""</c>. <c>""</c> or <c>":memory:"</c> will create an in-memory database.</remarks>
+        /// <remarks>
+        /// Supported values:
+        /// <list type="bullet">
+        ///   <item>
+        ///     <description><c>":memory:"</c> or <c>""</c> - Creates an in-memory database.</description>
+        ///   </item>
+        ///   <item>
+        ///     <description>Local file path (e.g. <c>file:localdb.sqlite</c> or <c>C:\data\localdbs.sqlite</c>) - Creates or opens a file-based database.</description>
+        ///   </item>
+        ///   <item>
+        ///     <description>Remote URL (e.g. <c>http://example.com/db</c>) - For remote database support.</description>
+        ///   </item>
+        /// </list>
+        /// Default: <c>""</c>.
+        /// </remarks>
         public string Url { get; set; }
 
         /// <summary>

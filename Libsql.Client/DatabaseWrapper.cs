@@ -37,6 +37,9 @@ namespace Libsql.Client
                         case "wss":
                             _type = _options.ReplicaPath != null ? DatabaseType.EmbeddedReplica : DatabaseType.Remote;
                             break;
+                        case "file":
+                            _type = DatabaseType.File;
+                            break;
                         default:
                             throw new InvalidOperationException($"Unsupported scheme: {uri.Scheme}");
                     }
