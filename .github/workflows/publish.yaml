@@ -23,9 +23,10 @@ jobs:
           fi
 
       - name: Download bindings
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v5
         with:
-          name: bindings
+          pattern: bindings-*
+          merge-multiple: true
           path: rust-bindings
 
       - name: Setup dotnet

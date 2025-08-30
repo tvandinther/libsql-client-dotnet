@@ -34,9 +34,9 @@ jobs:
         shell: bash
 
       - name: Upload bindings
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: bindings
+          name: bindings-${{ matrix.os }}
           path: |
             rust-bindings/target/release/*csharp_bindings.*
             rust-bindings/csharp-bindings/bindings/Libsql.g.cs
