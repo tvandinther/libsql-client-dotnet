@@ -41,11 +41,11 @@ fi
 # git sparse-checkout init
 # git sparse-checkout set bindings/c bindings/wasm libsql libsql-sys
 # -----
-# git fetch --quiet origin
-# git checkout fb85262
+git fetch --quiet origin
+git checkout e853d54
 # -----
-git fetch --depth 1 origin tag libsql-rs-v${LIBSQL_RS_VERSION}
-git reset --hard tags/libsql-rs-v${LIBSQL_RS_VERSION}
+# git fetch --depth 1 origin tag libsql-rs-v${LIBSQL_RS_VERSION}
+# git reset --hard tags/libsql-rs-v${LIBSQL_RS_VERSION}
 
 cd ..
 cargo build --release

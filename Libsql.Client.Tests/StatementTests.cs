@@ -189,4 +189,17 @@ public class StatementTests
 
         Assert.Equal(secondExpected, text2);
     }
+
+    [Fact]
+    public async Task Statement_CanGet_ColumnNames()
+    {
+        using var statement = await _db.Prepare("SELECT 1 AS `one`, 2 AS `two`");
+
+        var columnNames = statement.ColumnNames;
+
+        Assert.Collection(columnNames,
+            r => Assert.Equal("one", r),
+            r => Assert.Equal("two", r)
+        );
+    }
 }

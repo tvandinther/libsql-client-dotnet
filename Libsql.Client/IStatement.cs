@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Libsql.Client
@@ -21,6 +22,8 @@ namespace Libsql.Client
         /// <c>NNN</c> used plus any unannotated positional parameters to the right.
         /// </remarks>
         int ParameterCount { get; }
+
+        IEnumerable<string> ColumnNames { get; }
 
         /// <summary>
         /// Binds a value to the prepared statement.
