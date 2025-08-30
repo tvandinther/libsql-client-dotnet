@@ -51,7 +51,32 @@ var dbClient = await DatabaseClient.Create(opts => {
 ```csharp
 // Opens a database using a full connection string.
 var dbClient = await DatabaseClient.Create(opts => {
-    opts.Url = "file:./mydb.sqlite?mode=rwc";
+    opts.Url = "https://my-remote-db.example.com";
+});
+```
+
+#### Provide Additional Connection Options
+#### Remote Databases
+For remote libSQL databases, use client options for authentication and secure connections:
+
+```csharp
+// Connect to a remote database with authentication and HTTPS enabled
+var dbClient = await DatabaseClient.Create(opts =>
+{
+    opts.Url = "https://my-remote-db.example.com";
+    opts.AuthToken = "MY_TOKEN";
+    opts.UseHttps = true;
+});
+```
+
+#### Local File Databases
+For local files, you can pass standard query parameters via the file URI:
+
+```csharp
+// Open a local database with query parameters
+var dbClient = await DatabaseClient.Create(opts =>
+{
+    opts.Url = "file:mydb.sqlite?mode=rwc&cache=shared";
 });
 ```
 
