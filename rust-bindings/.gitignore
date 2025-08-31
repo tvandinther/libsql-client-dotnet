@@ -1,4 +1,4 @@
-libsql/
+libsql
 target/
 bindings/
 Cargo.lock
