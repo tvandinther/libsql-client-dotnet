@@ -188,7 +188,7 @@ The full test suite is run only on a Linux x64 platform. Most of the test suite 
   - [x] Non-parameterised.
   - [x] Parameterised with positional arguments.
   - [ ] Parameterised with named arguments.
-- [ ] Prepared statements.
+- [x] Prepared statements.
 - [ ] Batched statements.
 - [ ] Transactions.
 - [x] A result set is returned from an execution.
