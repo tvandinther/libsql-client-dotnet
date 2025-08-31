@@ -61,4 +61,4 @@ else
 fi
 
 cd "${bindings_dir}"
-cargo build --release
+cargo build --lib #--release

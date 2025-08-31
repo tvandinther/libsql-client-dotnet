@@ -65,6 +65,7 @@ namespace Libsql.Client
                 int columnType;
                 var error = new Error();
                 Debug.Assert(firstRow.ptr != null, "firstRow is null. Can not find column type on a null pointer.");
+                // TODO: Investigate why this call crashes tests in PositionalArgumentTests.cs
                 var errorCode = Bindings.libsql_column_type(_libsqlRowsT, firstRow, i, &columnType, &error.Ptr);
                 error.ThrowIfNonZero(errorCode, "Failed to get column type");
                 _enumeratorData.ColumnTypes[i] = (ValueType)columnType;
