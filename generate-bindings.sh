@@ -55,8 +55,8 @@ else
     git remote add --no-fetch origin "${remote}"
   fi
 
-  git fetch --quiet origin
-  git checkout "${commit}"
+  git fetch --quiet origin ${commit} --depth 1
+  git checkout FETCH_HEAD
   cd ../..
 fi
 
