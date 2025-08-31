@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +14,6 @@ namespace Libsql.Client
         int IStatement.BoundValuesCount => _bindIndex - 1;
 
         public int ParameterCount => GetParameterCount();
-        public IEnumerable<string> ColumnNames => GetColumnNames();
 
         private int _bindIndex = 1;
         public readonly libsql_stmt_t Stmt;
@@ -136,32 +136,6 @@ namespace Libsql.Client
             error.ThrowIfNonZero(exitCode, "Failed to get parameter count");
 
             return count;
-        }
-
-        private unsafe IEnumerable<string> GetColumnNames()
-        {
-            var error = new Error();
-            var ptr = (byte*)0;
-            int len;
-
-            var exitCode = Bindings.libsql_stmt_columns(Stmt, &ptr, &len, &error.Ptr);
-            error.ThrowIfNonZero(exitCode, "Failed to get column names");
-            Console.WriteLine((int)ptr);
-            var ptrs = new byte*[len];
-            for (var i = 0; i < ptrs.Length; i++)
-            {
-                ptrs[i] = (byte*)Marshal.ReadByte((IntPtr)ptr, i);
-            }
-
-            var names = new List<string>(len);
-            
-            foreach (var namePtr in ptrs)
-            {
-                Console.WriteLine((int)namePtr);
-                // names.Add(CustomMarshal.PtrToStringUTF8((IntPtr)namePtr));
-            }
-
-            return names;
         }
 
         public void Bind(Integer integer, int index)

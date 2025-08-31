@@ -23,8 +23,6 @@ namespace Libsql.Client
         /// </remarks>
         int ParameterCount { get; }
 
-        IEnumerable<string> ColumnNames { get; }
-
         /// <summary>
         /// Binds a value to the prepared statement.
         /// </summary>
