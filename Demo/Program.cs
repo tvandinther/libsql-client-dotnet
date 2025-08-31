@@ -7,20 +7,20 @@ using var dbClient = await DatabaseClient.Create(opts => {
 
 
 // Execute SQL statements directly
-var rs = await dbClient.Execute("CREATE TABLE IF NOT EXISTS `users` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `height` REAL, `data` BLOB)");
+var rs = await dbClient.Query("CREATE TABLE IF NOT EXISTS `users` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `height` REAL, `data` BLOB)");
 
 
 // Read the results by using the IResultSet interface
-var rs1 = await dbClient.Execute("INSERT INTO `users` (`name`, `height`, `data`) VALUES ('John Doe', 182.6, X'a4c7b8e21d3f50a6b9d2e8f7c1349a0b5c6d7e218349b6d012c71e8f9a093fed'), ('Jane Doe', 0.5, X'00')");
+var rs1 = await dbClient.Query("INSERT INTO `users` (`name`, `height`, `data`) VALUES ('John Doe', 182.6, X'a4c7b8e21d3f50a6b9d2e8f7c1349a0b5c6d7e218349b6d012c71e8f9a093fed'), ('Jane Doe', 0.5, X'00')");
 Console.WriteLine($"Inserted {rs1.RowsAffected} rows");
 Console.WriteLine($"Last inserted id: {rs1.LastInsertRowId}");
-var rs2 = await dbClient.Execute("SELECT `id`, `name`, `height`, `data` FROM `users`");
+var rs2 = await dbClient.Query("SELECT `id`, `name`, `height`, `data` FROM `users`");
 PrintTable(rs2);
 
 
 // Using positional arguments
 var searchString = "hn";
-var rs3 = await dbClient.Execute("SELECT `id`, `name`, `height`, `data` FROM `users` WHERE `name` LIKE concat('%', ?, '%')", searchString);
+var rs3 = await dbClient.Query("SELECT `id`, `name`, `height`, `data` FROM `users` WHERE `name` LIKE concat('%', ?, '%')", searchString);
 PrintTable(rs3);
 
 
