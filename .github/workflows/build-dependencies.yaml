@@ -27,15 +27,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-rust-bindings-
 
-      - name: Install devbox
-        uses: jetify-com/devbox-install-action@v0.13.0
-        with:
-          enable-cache: 'true'
-
       - name: Generate bindings
         if: |
           steps.cache-rust-bindings.outputs.cache-hit != 'true'
-        run: devbox run -- just generate-bindings --remote https://github.com/tvandinther/libsql --commit add-missing-statement-functions
+        run: ./generate-bindings.sh --remote https://github.com/tvandinther/libsql --commit add-missing-statement-functions
         shell: bash
 
       - name: Upload bindings
