@@ -14,12 +14,13 @@ A .NET client library for libsql.
   - From connection string.
 - Executing SQL statements:
   - Non-parameterised.
+  - With positional parameters
+- Prepared statements.
 
 ### Planned Features
 
-- Positional and named arguments.
+- Named arguments.
 - Embedded replicas.
-- Prepared statements.
 - Batched statements.
 - Transactions.
 
@@ -89,8 +90,20 @@ await dbClient.Execute("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT, h
 
 Using positional arguments
 ```csharp
-await dbClient.Execute("SELECT name FROM users WHERE id = ?", userId);
+await dbClient.Query("SELECT name FROM users WHERE id = ?", userId);
 ```
+
+Using prepared statements
+```csharp
+var statement = dbClient.Prepare("SELECT name FROM users WHERE id = ?");
+await statement.Query(userId);
+```
+
+#### `Execute` vs. `Query`
+
+`Execute` returns only the number of affected rows and is intended for statements where further detail is not necessary. A `LibSqlException` will be thrown if you use `Execute` on a statement that returns rows.
+
+`Query` returns a more useful `IResultSet` object which can be read for additional information such as the number of affected rows, the last inserted row ID, the column names, and the rows themselves.
 
 ### Querying the Database
 
@@ -110,10 +123,35 @@ User ToUser(IEnumerable<Value> row)
     throw new ArgumentException();
 }
 
-var result = await dbClient.Execute("SELECT * FROM users");
+var result = await dbClient.Query("SELECT * FROM users");
 
 var users = result.Rows.Select(ToUser);
 ```
+
+### Prepared Statements
+
+The following creates a prepared statement.
+```csharp
+var statement = dbClient.Prepare("SELECT * FROM users where userId = ?");
+```
+You can then bind positional arguments in order.
+```csharp
+statement.Bind(new Integer(1))
+```
+Statement execution can be done in two ways, both are the same.
+```csharp
+IResultSet result;
+result = statement.Query();
+result = dbClient.Query(statement);
+```
+You can also query the number of values already bound to the statement.
+```csharp
+statement.Bind(0.5);
+statement.Bind("libsql");
+var numberOfBoundValues = statement.BoundValuesCount;
+Console.WriteLine(numberOfBoundValues) // 2
+```
+> Prepared statements are held resources. `IStatement` implements the `IDisposable` interface. Make sure you manage its lifetime correctly.
 
 ### Closing the Database
 
@@ -150,7 +188,7 @@ The full test suite is run only on a Linux x64 platform. Most of the test suite 
   - [x] Non-parameterised.
   - [x] Parameterised with positional arguments.
   - [ ] Parameterised with named arguments.
-- [ ] Prepared statements.
+- [x] Prepared statements.
 - [ ] Batched statements.
 - [ ] Transactions.
 - [x] A result set is returned from an execution.

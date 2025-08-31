@@ -1,0 +1,20 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.14.0/.schema/devbox.schema.json",
+  "packages": [
+    "cmake@latest",
+    "rustup@latest",
+    "just@latest",
+    "dotnet-sdk@8",
+    "fzf@latest"
+  ],
+  "shell": {
+    "init_hook": [
+      "rustup default stable"
+    ],
+    "scripts": {
+      "test": [
+        "echo \"Error: no test specified\" && exit 1"
+      ]
+    }
+  }
+}

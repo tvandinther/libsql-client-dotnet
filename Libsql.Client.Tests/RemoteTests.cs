@@ -22,7 +22,7 @@ public class RemoteTests : IClassFixture<DatabaseContainer>, IDisposable
     [SkippableFact]
     public async Task CanConnectAndQueryRemoteDatabase()
     {
-        var rs = await DatabaseClient.Execute("SELECT COUNT(*) FROM tracks");
+        var rs = await DatabaseClient.Query("SELECT COUNT(*) FROM tracks");
         
         var count = rs.Rows.First().First();
         var value = Assert.IsType<Integer>(count);

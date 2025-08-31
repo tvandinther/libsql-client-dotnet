@@ -139,35 +139,85 @@ namespace Libsql.Client
         
             error.ThrowIfNonZero(exitCode, "Failed to connect to database");
         }
-    
-        public async Task<IResultSet> Execute(string sql)
+
+        public Task<IResultSet> Query(string sql)
         {
-            return await Task.Run(() =>
+            return Task.Run(() =>
             {
-                var statement = new Statement(_connection, sql);
-                return ExecuteStatement(statement);
+                using (var statement = new StatementWrapper(this, _connection, sql))
+                {
+                    return QueryStatement(statement);
+                }
             });
         }
 
-        public async Task<IResultSet> Execute(string sql, params object[] args)
+        public Task<IResultSet> Query(string sql, params object[] args)
         {
-            return await Task.Run(() => {
-                var statement = new Statement(_connection, sql);
-                statement.Bind(args);
+            return Task.Run(() => {
+                using (var statement = new StatementWrapper(this, _connection, sql))
+                {
+                    statement.BindAll(args);
+                    
+                    return QueryStatement(statement);
+                }
+            });
+        }
+    
+        public Task<ulong> Execute(string sql)
+        {
+            return Task.Run(() =>
+            {
+                using (var statement = new StatementWrapper(this, _connection, sql))
+                {
+                    return ExecuteStatement(statement);
+                };
+            });
+        }
+
+        public Task<ulong> Execute(string sql, params object[] args)
+        {
+            return Task.Run(() => {
+                using (var statement = new StatementWrapper(this, _connection, sql))
+                {
+                    statement.BindAll(args);
                 
+                    return ExecuteStatement(statement);
+                }
+            });
+        }
+        
+        public Task<IResultSet> Query(IStatement statement)
+        {
+            return statement.Query();
+        }
+
+        public Task<ulong> Execute(IStatement statement)
+        {
+            return statement.Execute();
+        }
+
+        internal Task<IResultSet> Query(StatementWrapper statement)
+        {
+            return Task.Run(() => {
+                return QueryStatement(statement);
+            });
+        }
+
+        internal Task<ulong> Execute(StatementWrapper statement)
+        {
+            return Task.Run(() => {
                 return ExecuteStatement(statement);
             });
         }
 
-        // TODO: Differentiate query statements and execute statements.
-        private unsafe IResultSet ExecuteStatement(Statement statement)
+
+        private unsafe IResultSet QueryStatement(StatementWrapper statement)
         {
             var error = new Error();
             var rows = new libsql_rows_t();
             int exitCode;
         
             exitCode = Bindings.libsql_query_stmt(statement.Stmt, &rows, &error.Ptr);
-            statement.Dispose();
 
             error.ThrowIfNonZero(exitCode, "Failed to execute statement");
         
@@ -179,14 +229,26 @@ namespace Libsql.Client
             );
         }
 
-        public async Task Sync()
+        private unsafe ulong ExecuteStatement(StatementWrapper statement)
+        {
+            var error = new Error();
+            int exitCode;
+        
+            exitCode = Bindings.libsql_execute_stmt(statement.Stmt, &error.Ptr);
+
+            error.ThrowIfNonZero(exitCode, "Failed to execute statement");
+
+            return Bindings.libsql_changes(_connection);
+        }
+
+        public Task Sync()
         {
             if (_type != DatabaseType.EmbeddedReplica)
             {
                 throw new InvalidOperationException("Cannot sync a non-replica database");
             }
             
-            await Task.Run(() =>
+            return Task.Run(() =>
             {
                 unsafe
                 {
@@ -198,6 +260,11 @@ namespace Libsql.Client
                     error.ThrowIfNonZero(exitCode, "Failed to sync database");
                 }
             });
+        }
+
+        public Task<IStatement> Prepare(string sql)
+        {
+            return Task.Run<IStatement>(() =>  new StatementWrapper(this, _connection, sql));
         }
 
         private void ReleaseUnmanagedResources()

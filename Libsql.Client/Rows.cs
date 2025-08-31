@@ -65,6 +65,7 @@ namespace Libsql.Client
                 int columnType;
                 var error = new Error();
                 Debug.Assert(firstRow.ptr != null, "firstRow is null. Can not find column type on a null pointer.");
+                // TODO: Investigate why this call crashes tests in PositionalArgumentTests.cs
                 var errorCode = Bindings.libsql_column_type(_libsqlRowsT, firstRow, i, &columnType, &error.Ptr);
                 error.ThrowIfNonZero(errorCode, "Failed to get column type");
                 _enumeratorData.ColumnTypes[i] = (ValueType)columnType;
@@ -123,7 +124,7 @@ namespace Libsql.Client
                     _enumeratorData.ColumnTypes[i] == ValueType.Text ? row.GetText(i) :
                     _enumeratorData.ColumnTypes[i] == ValueType.Blob ? row.GetBlob(i) :
                     _enumeratorData.ColumnTypes[i] == ValueType.Null ? (Value)new Null() :
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException($"Non-exhaustive check. Could not find a case to match value of {_enumeratorData.ColumnTypes[i]}");
             
                 parsedRow[i] = value;
             }

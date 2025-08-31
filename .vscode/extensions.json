@@ -1,0 +1,7 @@
+{
+    "recommendations": [
+        "nefrob.vscode-just-syntax",
+        "ms-dotnettools.csharp",
+        "rust-lang.rust-analyzer"
+    ]
+}

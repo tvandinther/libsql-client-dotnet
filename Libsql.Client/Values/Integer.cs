@@ -23,6 +23,10 @@ namespace Libsql.Client
 
         public static bool operator !=(Integer left, Integer right) => !(left == right);
         
+        public static implicit operator Integer(int value) => new Integer(value);
+        
+        public static implicit operator int(Integer integer) => integer.Value;
+        
         public override bool Equals(Value other)
         {
             if (other is Integer otherInteger)

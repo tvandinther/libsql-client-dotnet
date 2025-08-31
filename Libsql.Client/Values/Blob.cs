@@ -47,6 +47,10 @@ namespace Libsql.Client
 
         public static bool operator !=(Blob left, Blob right) => !(left == right);
 
+        public static implicit operator Blob(byte[] value) => new Blob(value);
+
+        public static implicit operator byte[](Blob blob) => blob.Value;
+
         public override bool Equals(Value other)
         {
             if (other is Blob otherBlob)
