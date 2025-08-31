@@ -4,7 +4,8 @@
     "cmake@latest",
     "rustup@latest",
     "just@latest",
-    "dotnet-sdk@8"
+    "dotnet-sdk@8",
+    "fzf@latest"
   ],
   "shell": {
     "init_hook": [
