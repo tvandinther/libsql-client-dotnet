@@ -4,8 +4,19 @@ members = [
     "libsql/bindings/c"
 ]
 
+[workspace.package]
+edition = "2021"
+authors = ["the libSQL authors"]
+version = "0.9.21"
+license = "MIT"
+repository = "https://github.com/tursodatabase/libsql"
+
 [workspace.dependencies]
-rusqlite = { package = "libsql-rusqlite", path = "libsql/vendored/rusqlite", version = "0.33", default-features = false, features = [
+libsql-ffi = { path = "libsql/libsql-ffi", version = "0.9.21" }
+libsql-sys = { path = "libsql/libsql-sys", version = "0.9.21", default-features = false }
+libsql-hrana = { path = "libsql/libsql-hrana", version = "0.9.21" }
+libsql_replication = { path = "libsql/libsql-replication", version = "0.9.21" }
+rusqlite = { package = "libsql-rusqlite", path = "libsql/vendored/rusqlite", version = "0.9.21", default-features = false, features = [
     "libsql-experimental",
     "column_decltype",
     "load_extension",
